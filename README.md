@@ -33,7 +33,7 @@
 * General
   * QR code generation
   * prevent users from voting multiple times in quick succession (track IP addresses?)
- 
+
 ## Implementation Ideas
 
 * Backend Options
