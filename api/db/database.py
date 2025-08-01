@@ -1,4 +1,5 @@
 from typing import TypeVar
+
 from pydantic import BaseModel
 from sqlalchemy import create_engine, orm
 from sqlalchemy.orm import sessionmaker
@@ -10,6 +11,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # TODO: possible delete this. copied from another project but might not need?
 BaseModelSubclass = TypeVar("BaseModelSubclass", bound=BaseModel)
+
 
 class DbBase(orm.DeclarativeBase):
     pass
