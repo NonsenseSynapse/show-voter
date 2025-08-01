@@ -1,0 +1,31 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - dev
+      - default
+  db:
+    image: postgres:16.6
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - dev
+      - default
+    environment:
+      POSTGRES_USER: localuser
+      POSTGRES_PASSWORD: localpass
+      POSTGRES_DB: show-voter
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+
+volumes:
+  pgdata:
+
+networks:
+  dev:
