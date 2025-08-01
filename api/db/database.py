@@ -1,4 +1,4 @@
-from typing import TypeVar
+from typing import TypeVar, Type
 
 from pydantic import BaseModel
 from sqlalchemy import create_engine, orm
@@ -14,4 +14,5 @@ BaseModelSubclass = TypeVar("BaseModelSubclass", bound=BaseModel)
 
 
 class DbBase(orm.DeclarativeBase):
-    pass
+    def to_pydantic(self, pydantic_model: Type[BaseModelSubclass]) -> BaseModelSubclass:
+        return pydantic_model(**self.__dict__)
