@@ -1,14 +1,12 @@
 from fastapi import APIRouter, HTTPException
+
 from api.dependencies import DB_SESSION
 from api.models.show import Show
-from api.schemas.show import ShowResponseSchema, ShowCreateSchema
+from api.schemas.show import ShowCreateSchema, ShowResponseSchema
 from api.services.show import create_show, update_show
 
+router = APIRouter(prefix="/show", tags=["show"])
 
-router = APIRouter(
-    prefix="/show",
-    tags=["show"]
-)
 
 @router.get("/{show_id}")
 async def get_show(show_id: int, db: DB_SESSION):
@@ -17,10 +15,12 @@ async def get_show(show_id: int, db: DB_SESSION):
         raise HTTPException(status_code=404, detail="Show not found")
     return show.to_pydantic(ShowResponseSchema)
 
+
 @router.post("")
 async def create_new_show(show: ShowCreateSchema, db: DB_SESSION):
     new_show = create_show(db, show)
     return new_show.to_pydantic(ShowResponseSchema)
+
 
 @router.post("/{show_id}")
 async def update_show_details(show_id, show: ShowCreateSchema, db: DB_SESSION):
