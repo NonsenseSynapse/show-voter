@@ -1,5 +1,6 @@
 from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
 from api.db.database import DbBase
 
@@ -11,3 +12,5 @@ class Show(DbBase):
     date_created = Column(DateTime, default=func.now())
 
     current_poll_id = Column(Integer)
+
+    polls = relationship("Poll")
