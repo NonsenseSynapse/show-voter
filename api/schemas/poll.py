@@ -1,7 +1,23 @@
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel
+
+
+class PollOptionCreateSchema(BaseModel):
+    description: str
+
+
+class PollOptionUpdateSchema(BaseModel):
+    description: str
+
+
+class PollOptionResponseSchema(BaseModel):
+    id: int
+    description: str
+    poll_id: int
+    date_created: datetime
+    date_updated: datetime
 
 
 class PollResponseSchema(BaseModel):
@@ -10,6 +26,7 @@ class PollResponseSchema(BaseModel):
     order: int
     show_id: int
     date_created: datetime
+    poll_options: Optional[List[PollOptionResponseSchema]] = []
 
 
 class PollCreateSchema(BaseModel):
