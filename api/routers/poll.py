@@ -25,7 +25,6 @@ async def get_poll(poll_id: int, db: DB_SESSION):
     poll = db.get(Poll, poll_id)
     if not poll:
         raise HTTPException(status_code=404, detail="Poll not found")
-    # return poll.to_pydantic(PollResponseSchema)
     return serialize_poll(poll)
 
 
@@ -38,7 +37,7 @@ async def create_new_poll(poll: PollCreateSchema, db: DB_SESSION):
 @router.post("/{poll_id}")
 async def update_poll_details(poll_id, poll_option: PollUpdateSchema, db: DB_SESSION):
     updated_poll = update_poll(db, poll_id, poll_option)
-    return updated_poll.to_pydantic(PollResponseSchema)
+    return serialize_poll(updated_poll)
 
 
 @router.post("/{poll_id}/option")
