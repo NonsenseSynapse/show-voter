@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 
 from api.models.show import Show
-from api.schemas.show import ShowCreateSchema
+from api.schemas.show import ShowCreateSchema, ShowResponseDetailsSchema
+from api.services.poll import serialize_poll
 
 
 def create_show(db: Session, show: ShowCreateSchema):
@@ -18,3 +19,13 @@ def update_show(db: Session, existing_show: Show, show: ShowCreateSchema):
     db.commit()
     db.refresh(existing_show)
     return existing_show
+
+
+def serialize_show_details(show: Show):
+    return ShowResponseDetailsSchema(
+        id=show.id,
+        title=show.title,
+        current_poll_id=show.current_poll_id,
+        date_created=show.date_created,
+        polls=[serialize_poll(poll) for poll in show.polls],
+    )

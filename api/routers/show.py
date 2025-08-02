@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 from api.dependencies import DB_SESSION
 from api.models.show import Show
 from api.schemas.show import ShowCreateSchema, ShowResponseSchema
-from api.services.show import create_show, update_show
+from api.services.show import create_show, serialize_show_details, update_show
 
 router = APIRouter(prefix="/show", tags=["show"])
 
@@ -13,7 +13,7 @@ async def get_show(show_id: int, db: DB_SESSION):
     show = db.get(Show, show_id)
     if not show:
         raise HTTPException(status_code=404, detail="Show not found")
-    return show.to_pydantic(ShowResponseSchema)
+    return serialize_show_details(show)
 
 
 @router.post("")
