@@ -5,13 +5,14 @@ from sqlalchemy.sql import func
 from api.db.database import DbBase
 from api.models.show import Show
 
+
 class Poll(DbBase):
     __tablename__ = "poll"
     id = Column(Integer, primary_key=True, index=True)
     description = Column(String)
     order = Column(Integer)
     date_created = Column(DateTime, default=func.now())
-    
+
     show_id = Column(Integer, ForeignKey(Show.id))
 
     show = relationship("Show", back_populates="polls", uselist=False)
