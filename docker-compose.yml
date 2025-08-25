@@ -8,6 +8,8 @@ services:
     networks:
       - dev
       - default
+    # network_mode: "host"
+    command: uv run fastapi run api/main.py
   db:
     image: postgres:16.6
     restart: always
