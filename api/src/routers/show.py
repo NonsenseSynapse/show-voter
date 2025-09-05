@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException
 
-from api.dependencies import DB_SESSION
-from api.models.show import Show
-from api.schemas.show import ShowCreateSchema, ShowResponseSchema
-from api.services.show import create_show, serialize_show_details, update_show
+from src.core.dependencies import DB_SESSION
+from src.models.show import Show
+from src.schemas.show import ShowCreateSchema, ShowResponseSchema
+from src.services.show import create_show, serialize_show_details, update_show
 
 router = APIRouter(prefix="/show", tags=["show"])
 

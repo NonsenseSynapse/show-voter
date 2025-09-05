@@ -2,7 +2,7 @@ from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from api.db.database import DbBase
+from src.db.database import DbBase
 
 
 class Show(DbBase):

@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-from api.schemas.poll import PollResponseSchema
+from src.schemas.poll import PollResponseSchema
 
 
 class ShowResponseSchema(BaseModel):

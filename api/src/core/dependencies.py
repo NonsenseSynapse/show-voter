@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from api.db.database import SessionLocal
+from src.db.database import SessionLocal
 
 
 def get_db():

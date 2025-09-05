@@ -1,9 +1,9 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from api.models.poll import Poll, PollOption
-from api.models.show import Show
-from api.schemas.poll import (
+from src.models.poll import Poll, PollOption
+from src.models.show import Show
+from src.schemas.poll import (
     PollCreateSchema,
     PollOptionCreateSchema,
     PollOptionResponseSchema,

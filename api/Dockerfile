@@ -11,4 +11,4 @@ EXPOSE 8000
 ENV PYTHONUNBUFFERED 1
 ENV DEBIAN_FRONTEND=noninteractive
 
-CMD ["uv", "run", "fastapi", "run", "api/main.py"]
+CMD ["uv", "run", "fastapi", "run", "src/main.py"]

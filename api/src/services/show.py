@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 
-from api.models.show import Show
-from api.schemas.show import ShowCreateSchema, ShowResponseDetailsSchema
-from api.services.poll import serialize_poll
+from src.models.show import Show
+from src.schemas.show import ShowCreateSchema, ShowResponseDetailsSchema
+from src.services.poll import serialize_poll
 
 
 def create_show(db: Session, show: ShowCreateSchema):

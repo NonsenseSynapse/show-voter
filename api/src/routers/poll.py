@@ -1,15 +1,15 @@
 from fastapi import APIRouter, HTTPException
 
-from api.dependencies import DB_SESSION
-from api.models.poll import Poll
-from api.schemas.poll import (
+from src.core.dependencies import DB_SESSION
+from src.models.poll import Poll
+from src.schemas.poll import (
     PollCreateSchema,
     PollOptionCreateSchema,
     PollOptionResponseSchema,
     PollResponseSchema,
     PollUpdateSchema,
 )
-from api.services.poll import (
+from src.services.poll import (
     create_poll,
     create_poll_option,
     serialize_poll,

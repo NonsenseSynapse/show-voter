@@ -2,8 +2,8 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from api.db.database import DbBase
-from api.models.show import Show
+from src.db.database import DbBase
+from src.models.show import Show
 
 
 class Poll(DbBase):

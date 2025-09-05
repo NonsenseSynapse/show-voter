@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from sqlalchemy import create_engine, orm
 from sqlalchemy.orm import sessionmaker
 
-from api.core.config import DATABASE_URL
+from src.core.config import DATABASE_URL
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

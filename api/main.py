@@ -1,6 +1,5 @@
 from fastapi import FastAPI
-
-from api.routers import poll, show
+from src.routers import poll, show
 
 app = FastAPI()
 app.include_router(show.router)
