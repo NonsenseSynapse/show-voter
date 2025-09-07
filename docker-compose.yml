@@ -1,7 +1,22 @@
 services:
+  web:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./ui/src:/app/src
+    command: "npm run dev"
+  web-prod:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile.prod
+    ports:
+      - "8080:8080"
   api:
     build:
-      context: .
+      context: ./api
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
@@ -9,7 +24,7 @@ services:
       - dev
       - default
     # network_mode: "host"
-    command: uv run fastapi run api/main.py
+    command: uv run fastapi run main.py
   db:
     image: postgres:16.6
     restart: always
