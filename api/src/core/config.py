@@ -1,6 +1,6 @@
 import os
 
-DATABASE_HOST = os.getenv("DB_HOST", "localhost")
+DATABASE_HOST = os.getenv("DB_HOST", "db")
 DATABASE_PORT = os.getenv("DB_PORT", "5432")
 DATABASE_NAME = os.getenv("DB_NAME", "show-voter")
 DATABASE_USER = os.getenv("DB_USER", "localuser")
