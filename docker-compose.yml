@@ -1,4 +1,19 @@
 services:
+  web:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./ui/src:/app/src
+    command: "npm run dev"
+  web-prod:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile.prod
+    ports:
+      - "8080:8080"
   api:
     build:
       context: ./api
