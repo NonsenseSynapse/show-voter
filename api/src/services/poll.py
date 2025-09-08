@@ -111,5 +111,26 @@ def create_poll_and_options(db: Session, poll_and_options: PollAndOptionsCreateS
             description=poll_and_options.description,
         ),
     )
+    db.add(poll)
+    db.commit()
     for poll_option_schema in poll_and_options.poll_options:
-        pass
+        poll_option = create_poll_option(db, poll.id, PollOptionCreateSchema(
+            description=poll_option_schema.description
+        ))
+        db.add(poll_option)
+    db.commit()
+
+    return PollResponseSchema(
+        id=poll.id,
+        description=poll.description,
+        order=poll.order,
+        show_id=poll.show_id,
+        date_created=poll.date_created,
+        poll_options=[PollOptionResponseSchema(
+            id=poll_option.id,
+            description=poll_option.description,
+            poll_id=poll.id,
+            date_created=poll_option.date_created,
+            date_updated=poll_option.date_updated
+        ) for poll_option in poll.poll_options]
+    )

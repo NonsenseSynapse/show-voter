@@ -2,7 +2,7 @@ import os
 
 CORS_ORIGINS = ["http://localhost:3000", "http://localhost:8080"]
 
-DATABASE_HOST = os.getenv("DB_HOST", "db")
+DATABASE_HOST = os.getenv("DB_HOST", "localhost")
 DATABASE_PORT = os.getenv("DB_PORT", "5432")
 DATABASE_NAME = os.getenv("DB_NAME", "show-voter")
 DATABASE_USER = os.getenv("DB_USER", "localuser")

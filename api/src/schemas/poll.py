@@ -44,6 +44,4 @@ class PollAndOptionsCreateSchema(BaseModel):
     show_id: int
     description: str
     order: Optional[int] = 0
-
-
-poll_options: Optional[List[PollOptionCreateSchema]] = []
+    poll_options: Optional[List[PollOptionCreateSchema]] = []

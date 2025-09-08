@@ -8,6 +8,7 @@ from src.schemas.poll import (
     PollResponseSchema,
     PollUpdateSchema,
 )
+from src.schemas.vote import VoteCreateSchema
 from src.services.poll import (
     create_poll,
     create_poll_option,
@@ -15,6 +16,7 @@ from src.services.poll import (
     update_poll,
     update_poll_option,
 )
+from src.services.vote import create_vote
 
 router = APIRouter(prefix="/poll", tags=["poll"])
 
@@ -53,3 +55,12 @@ async def update_poll_option_details(
 ):
     updated_poll_option = update_poll_option(db, poll_id, option_id, poll_option)
     return updated_poll_option.to_pydantic(PollOptionResponseSchema)
+
+@router.post("/{poll_id}/option/{option_id}/vote")
+async def poll_vote(
+    poll_id: int, option_id: int, db: DB_SESSION
+):
+    poll = db.get(Poll, poll_id)
+    new_vote = create_vote(VoteCreateSchema(show_id=poll.show_id, poll_id=poll_id, poll_option_id=option_id))
+
+    return new_vote.to_pydantic()

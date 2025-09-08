@@ -10,26 +10,46 @@ function PollCreate() {
 
     const navigate = useNavigate()
 
-    const [showName, setShowName] = useState("")
+    const [pollQuestion, setPollQuestion] = useState("")
+    const [optionOne, setOptionOne] = useState("")
+    const [optionTwo, setOPtionTwo] = useState("")
 
-    const createShow = async () => {
-        const response = await apiPost(`poll`, {
-            show_id: showName,
+    const creatPoll = async () => {
+        const response = await apiPost(`show/${show_id}/poll/create`, {
+            "show_id": show_id,
+            "description": pollQuestion,
+            "order": 0,
+            "poll_options": [
+                {"description": optionOne},
+                {"description": optionTwo}
+            ]
         })
         console.log("RESPONSE...")
         console.log(response)
-        navigate(`show/${show_id}/poll/${response.id}/display`)
+        navigate(`/show/${show_id}/poll/${response.id}/display`)
     }
 
     return (
         <>
-            <TextField
-                label="Show Name"
+             <TextField
+                label="Poll Question"
                 variant="outlined"
-                onChange={(e) => setShowName(e.target.value)}
+                onChange={(e) => setPollQuestion(e.target.value)}
             />
-            <Button onClick={createShow} variant="contained">
-                Create Show
+
+            <TextField
+                label="Option 1"
+                variant="outlined"
+                onChange={(e) => setOptionOne(e.target.value)}
+            />
+
+            <TextField
+                label="Option 2"
+                variant="outlined"
+                onChange={(e) => setOPtionTwo(e.target.value)}
+            />
+            <Button onClick={creatPoll} variant="contained">
+                Create Poll
             </Button>
         </>
     )
