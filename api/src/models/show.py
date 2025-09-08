@@ -1,7 +1,6 @@
 from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-
 from src.db.database import DbBase
 
 

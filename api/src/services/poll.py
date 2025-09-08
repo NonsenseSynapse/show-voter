@@ -1,15 +1,17 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-
 from src.models.poll import Poll, PollOption
 from src.models.show import Show
 from src.schemas.poll import (
+    PollAndOptionsCreateSchema,
     PollCreateSchema,
     PollOptionCreateSchema,
     PollOptionResponseSchema,
     PollOptionUpdateSchema,
+    PollResponseDetailsSchema,
     PollResponseSchema,
     PollUpdateSchema,
+    PollVoteResponseSchema,
 )
 
 
@@ -90,7 +92,7 @@ def update_poll_option(
 
 
 def serialize_poll(poll: Poll):
-    return PollResponseSchema(
+    return PollResponseDetailsSchema(
         id=poll.id,
         description=poll.description,
         order=poll.order,
@@ -98,6 +100,45 @@ def serialize_poll(poll: Poll):
         date_created=poll.date_created,
         poll_options=[
             poll_option.to_pydantic(PollOptionResponseSchema)
+            for poll_option in poll.poll_options
+        ],
+        votes=[vote.to_pydantic(PollVoteResponseSchema) for vote in poll.votes],
+    )
+
+
+def create_poll_and_options(db: Session, poll_and_options: PollAndOptionsCreateSchema):
+    poll = create_poll(
+        db,
+        PollCreateSchema(
+            show_id=poll_and_options.show_id,
+            description=poll_and_options.description,
+        ),
+    )
+    db.add(poll)
+    db.commit()
+    for poll_option_schema in poll_and_options.poll_options:
+        poll_option = create_poll_option(
+            db,
+            poll.id,
+            PollOptionCreateSchema(description=poll_option_schema.description),
+        )
+        db.add(poll_option)
+    db.commit()
+
+    return PollResponseSchema(
+        id=poll.id,
+        description=poll.description,
+        order=poll.order,
+        show_id=poll.show_id,
+        date_created=poll.date_created,
+        poll_options=[
+            PollOptionResponseSchema(
+                id=poll_option.id,
+                description=poll_option.description,
+                poll_id=poll.id,
+                date_created=poll_option.date_created,
+                date_updated=poll_option.date_updated,
+            )
             for poll_option in poll.poll_options
         ],
     )

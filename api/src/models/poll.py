@@ -1,7 +1,6 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-
 from src.db.database import DbBase
 from src.models.show import Show
 
@@ -17,6 +16,7 @@ class Poll(DbBase):
 
     show = relationship("Show", back_populates="polls", uselist=False)
     poll_options = relationship("PollOption")
+    votes = relationship("Vote")
 
 
 class PollOption(DbBase):

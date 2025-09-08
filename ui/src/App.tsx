@@ -1,35 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
+
+import Grid from "@mui/material/Grid"
+import { createTheme, ThemeProvider } from "@mui/material/styles"
+
+import Home from "./Home"
+import PollCreate from "./PollCreate"
+import PollDisplay from "./PollDisplay"
+import PollVote from "./PollVote"
+import QRGenerator from "./QRGenerator"
+import ShowCreate from "./ShowCreate"
 
 function App() {
-  const [count, setCount] = useState(0)
+    const router = createBrowserRouter([
+        {
+            path: "",
+            element: <Home />,
+        },
+        {
+            path: "/show/:show_id/poll/:poll_id/vote",
+            element: <PollVote />,
+        },
+        {
+            path: "show/:show_id/poll/:poll_id/display",
+            element: <PollDisplay />,
+        },
+        {
+            path: "show/:show_id/poll/create",
+            element: <PollCreate />,
+        },
+        {
+            path: "show/create",
+            element: <ShowCreate />,
+        },
+        {
+            path: "qr/create",
+            element: <QRGenerator />,
+        },
+    ])
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const lightTheme = createTheme({
+        palette: {
+            mode: "light",
+        },
+    })
+
+    const STYLES = {
+        contentWrapper: "",
+    }
+
+    return (
+        <ThemeProvider theme={lightTheme}>
+            <Grid container spacing={2} display="flex" justifyContent="center" alignItems="">
+                <Grid container size={12} className={STYLES.contentWrapper}>
+                    <RouterProvider router={router} />
+                </Grid>
+            </Grid>
+        </ThemeProvider>
+    )
 }
 
 export default App

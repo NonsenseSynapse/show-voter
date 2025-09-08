@@ -15,4 +15,3 @@ RUN cp -r /app/dist/* /usr/share/nginx/html
 # COPY ./nginx/default.config /etc/nginx/conf.d/
 USER nginx
 EXPOSE 8080
-
