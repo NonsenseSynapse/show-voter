@@ -19,6 +19,7 @@ class PollOptionResponseSchema(BaseModel):
     date_created: datetime
     date_updated: datetime
 
+
 class PollResponseSchema(BaseModel):
     id: int
     description: str
@@ -45,9 +46,11 @@ class PollAndOptionsCreateSchema(BaseModel):
     order: Optional[int] = 0
     poll_options: Optional[List[PollOptionCreateSchema]] = []
 
+
 class PollVoteResponseSchema(BaseModel):
     poll_option_id: int
     date_created: datetime
+
 
 class PollResponseDetailsSchema(PollResponseSchema):
     votes: Optional[List[PollVoteResponseSchema]] = []

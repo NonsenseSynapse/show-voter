@@ -64,7 +64,7 @@ async def poll_vote(poll_id: int, option_id: int, db: DB_SESSION):
         db,
         VoteCreateSchema(
             show_id=poll.show_id, poll_id=poll_id, poll_option_id=option_id
-        )
+        ),
     )
 
     return new_vote.to_pydantic(VoteResponseSchema)

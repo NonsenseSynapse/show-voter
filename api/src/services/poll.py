@@ -8,11 +8,12 @@ from src.schemas.poll import (
     PollOptionCreateSchema,
     PollOptionResponseSchema,
     PollOptionUpdateSchema,
+    PollResponseDetailsSchema,
     PollResponseSchema,
     PollUpdateSchema,
     PollVoteResponseSchema,
-    PollResponseDetailsSchema
 )
+
 
 def create_poll(db: Session, poll: PollCreateSchema):
     show = db.get(Show, poll.show_id)
@@ -101,10 +102,7 @@ def serialize_poll(poll: Poll):
             poll_option.to_pydantic(PollOptionResponseSchema)
             for poll_option in poll.poll_options
         ],
-        votes = [
-            vote.to_pydantic(PollVoteResponseSchema)
-            for vote in poll.votes
-        ]
+        votes=[vote.to_pydantic(PollVoteResponseSchema) for vote in poll.votes],
     )
 
 
