@@ -1,6 +1,8 @@
-import Grid from "@mui/material/Grid"
-import Button from "@mui/material/Button"
 import { useNavigate } from "react-router-dom"
+
+import Button from "@mui/material/Button"
+import Grid from "@mui/material/Grid"
+
 function Home() {
     const navigate = useNavigate()
 
@@ -12,10 +14,7 @@ function Home() {
         <>
             <Grid size={12}>
                 <Grid size={12} className={STYLES.linkButtonWrapper}>
-                    <Button
-                        onClick={() => navigate("show/create")}
-                        variant="contained"
-                    >
+                    <Button onClick={() => navigate("show/create")} variant="contained">
                         Create Show
                     </Button>
                 </Grid>

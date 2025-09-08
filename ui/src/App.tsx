@@ -1,13 +1,14 @@
 import { useState } from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
+
+import Grid from "@mui/material/Grid"
+import { createTheme, ThemeProvider } from "@mui/material/styles"
+
 import Home from "./Home"
-import PollDisplay from "./PollDisplay"
 import PollCreate from "./PollCreate"
+import PollDisplay from "./PollDisplay"
 import ShowCreate from "./ShowCreate"
 import Vote from "./Vote"
-import Grid from "@mui/material/Grid"
-
-import { createTheme, ThemeProvider } from "@mui/material/styles"
 
 function App() {
     const router = createBrowserRouter([
@@ -45,13 +46,7 @@ function App() {
 
     return (
         <ThemeProvider theme={lightTheme}>
-            <Grid
-                container
-                spacing={2}
-                display="flex"
-                justifyContent="center"
-                alignItems=""
-            >
+            <Grid container spacing={2} display="flex" justifyContent="center" alignItems="">
                 <Grid container size={12} className={STYLES.contentWrapper}>
                     <RouterProvider router={router} />
                 </Grid>
