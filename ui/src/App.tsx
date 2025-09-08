@@ -9,7 +9,7 @@ import PollCreate from "./PollCreate"
 import PollDisplay from "./PollDisplay"
 import QRGenerator from "./QRGenerator"
 import ShowCreate from "./ShowCreate"
-import Vote from "./Vote"
+import Vote from "./PollVote"
 
 function App() {
     const router = createBrowserRouter([

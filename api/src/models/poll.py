@@ -16,6 +16,7 @@ class Poll(DbBase):
 
     show = relationship("Show", back_populates="polls", uselist=False)
     poll_options = relationship("PollOption")
+    votes = relationship("Vote")
 
 
 class PollOption(DbBase):
