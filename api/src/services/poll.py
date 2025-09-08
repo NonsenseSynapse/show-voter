@@ -1,9 +1,9 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-
 from src.models.poll import Poll, PollOption
 from src.models.show import Show
 from src.schemas.poll import (
+    PollAndOptionsCreateSchema,
     PollCreateSchema,
     PollOptionCreateSchema,
     PollOptionResponseSchema,
@@ -101,3 +101,15 @@ def serialize_poll(poll: Poll):
             for poll_option in poll.poll_options
         ],
     )
+
+
+def create_poll_and_options(db: Session, poll_and_options: PollAndOptionsCreateSchema):
+    poll = create_poll(
+        db,
+        PollCreateSchema(
+            show_id=poll_and_options.show_id,
+            description=poll_and_options.description,
+        ),
+    )
+    for poll_option_schema in poll_and_options.poll_options:
+        pass

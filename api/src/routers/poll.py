@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException
-
 from src.core.dependencies import DB_SESSION
 from src.models.poll import Poll
 from src.schemas.poll import (

@@ -3,7 +3,6 @@ from typing import Type, TypeVar
 from pydantic import BaseModel
 from sqlalchemy import create_engine, orm
 from sqlalchemy.orm import sessionmaker
-
 from src.core.config import DATABASE_URL
 
 engine = create_engine(DATABASE_URL)

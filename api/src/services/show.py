@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-
 from src.models.show import Show
 from src.schemas.show import ShowCreateSchema, ShowResponseDetailsSchema
 from src.services.poll import serialize_poll
