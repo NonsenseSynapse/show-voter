@@ -7,6 +7,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles"
 import Home from "./Home"
 import PollCreate from "./PollCreate"
 import PollDisplay from "./PollDisplay"
+import QRGenerator from "./QRGenerator"
 import ShowCreate from "./ShowCreate"
 import Vote from "./Vote"
 
@@ -31,6 +32,10 @@ function App() {
         {
             path: "show/create",
             element: <ShowCreate />,
+        },
+        {
+            path: "qr/create",
+            element: <QRGenerator />,
         },
     ])
 

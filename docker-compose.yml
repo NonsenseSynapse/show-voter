@@ -8,6 +8,9 @@ services:
     volumes:
       - ./ui/src:/app/src
     command: "npm run dev"
+    networks:
+      - dev
+      - default
   web-prod:
     build:
       context: ./ui

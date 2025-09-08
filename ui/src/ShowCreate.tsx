@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import Button from "@mui/material/Button"
 import TextField from "@mui/material/TextField"
 
+import { API_BASE, IS_DEV, IS_PROD } from "./constants"
 import { apiGet, apiPost } from "./utils/api"
 
 function PollCreate() {
@@ -12,10 +13,16 @@ function PollCreate() {
     const [showName, setShowName] = useState("")
 
     const createShow = async () => {
-        const response = await apiPost("", {})
+        console.log("DO THE THING NOW")
+        console.log(`${API_BASE}/show`)
+        console.log("IS_DEV? ", IS_DEV)
+        console.log("IS_PROD?", IS_PROD)
+        const response = await apiPost(`show`, {
+            title: showName,
+        })
         console.log("RESPONSE...")
         console.log(response)
-        navigate("")
+        navigate(`show/${response.id}/poll/create`)
     }
 
     return (

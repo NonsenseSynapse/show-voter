@@ -24,6 +24,11 @@ function Home() {
                         Create Poll
                     </Button>
                 </Grid>
+                <Grid size={12} className={STYLES.linkButtonWrapper}>
+                    <Button onClick={() => navigate("qr/create")} variant="contained">
+                        Create QR Code
+                    </Button>
+                </Grid>
             </Grid>
         </>
     )
