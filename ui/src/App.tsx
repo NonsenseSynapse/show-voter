@@ -1,64 +1,63 @@
-import { useState } from 'react'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { useState } from "react"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Home from "./Home"
-import PollDisplay from './PollDisplay'
-import PollCreate from './PollCreate'
-import ShowCreate from './ShowCreate'
-import Vote from './Vote'
+import PollDisplay from "./PollDisplay"
+import PollCreate from "./PollCreate"
+import ShowCreate from "./ShowCreate"
+import Vote from "./Vote"
 import Grid from "@mui/material/Grid"
 
-import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { createTheme, ThemeProvider } from "@mui/material/styles"
 
 function App() {
+    const router = createBrowserRouter([
+        {
+            path: "",
+            element: <Home />,
+        },
+        {
+            path: "/show/:show_id/poll/:poll_id/vote",
+            element: <Vote />,
+        },
+        {
+            path: "show/:show_id/poll/:poll_id/display",
+            element: <PollDisplay />,
+        },
+        {
+            path: "show/:show_id/poll/create",
+            element: <PollCreate />,
+        },
+        {
+            path: "show/create",
+            element: <ShowCreate />,
+        },
+    ])
 
-  const router = createBrowserRouter([
-    {
-      path:"",
-      element: <Home/>
-    },
-    {
-      path: "/show/:show_id/poll/:poll_id/vote",
-      element: <Vote />
-    },
-    {
-      path: "show/:show_id/poll/:poll_id/display",
-      element: <PollDisplay />
-    },
-    {
-      path: "show/:show_id/poll/create",
-      element: <PollCreate />
-    },
-    {
-      path: "show/create",
-      element: <ShowCreate />
+    const lightTheme = createTheme({
+        palette: {
+            mode: "light",
+        },
+    })
+
+    const STYLES = {
+        contentWrapper: "",
     }
-  ])
 
-  const lightTheme = createTheme({
-    palette: {
-      mode: "light"
-    }
-  })
-
-  const STYLES = {
-    contentWrapper: ""
-  }
-
-  return (
-    <ThemeProvider theme={lightTheme}>
-      <Grid container
-      spacing={2}
-      display="flex"
-      justifyContent="center"
-      alignItems="">
-        <Grid container size={12} className={STYLES.contentWrapper}>
-          <RouterProvider router={router} />
-
-        </Grid>
-
-      </Grid>
-    </ThemeProvider>
-  )
+    return (
+        <ThemeProvider theme={lightTheme}>
+            <Grid
+                container
+                spacing={2}
+                display="flex"
+                justifyContent="center"
+                alignItems=""
+            >
+                <Grid container size={12} className={STYLES.contentWrapper}>
+                    <RouterProvider router={router} />
+                </Grid>
+            </Grid>
+        </ThemeProvider>
+    )
 }
 
 export default App

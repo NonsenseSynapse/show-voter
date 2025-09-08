@@ -1,10 +1,5 @@
-
-
 function PollCreate() {
-
-    return(<>
-        PollCreate
-    </>)
+    return <>PollCreate</>
 }
 
 export default PollCreate

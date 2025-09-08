@@ -5,26 +5,29 @@ function Home() {
     const navigate = useNavigate()
 
     const STYLES = {
-        linkButtonWrapper: "mb-4"
+        linkButtonWrapper: "mb-4",
     }
 
-    return(<>
-        <Grid size={12}>
-            <Grid size={12} className={STYLES.linkButtonWrapper}>
-                <Button onClick={() => navigate("show/create")} variant="contained">
-                    Create Show
-                </Button>
-            </Grid>
+    return (
+        <>
+            <Grid size={12}>
+                <Grid size={12} className={STYLES.linkButtonWrapper}>
+                    <Button
+                        onClick={() => navigate("show/create")}
+                        variant="contained"
+                    >
+                        Create Show
+                    </Button>
+                </Grid>
 
-            <Grid size={12} className={STYLES.linkButtonWrapper}>
-                
-                <Button onClick={() => navigate("")} variant="contained">
-                    Create Poll
-                </Button>
+                <Grid size={12} className={STYLES.linkButtonWrapper}>
+                    <Button onClick={() => navigate("")} variant="contained">
+                        Create Poll
+                    </Button>
+                </Grid>
             </Grid>
-
-        </Grid>
-    </>)
+        </>
+    )
 }
 
 export default Home

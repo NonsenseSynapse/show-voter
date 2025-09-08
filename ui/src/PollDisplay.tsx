@@ -1,10 +1,5 @@
-
-
 function PollDisplay() {
-
-    return(<>
-        PollDisplay
-    </>)
+    return <>PollDisplay</>
 }
 
 export default PollDisplay

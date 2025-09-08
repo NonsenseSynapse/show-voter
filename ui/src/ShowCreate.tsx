@@ -1,35 +1,33 @@
-
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import { useState } from 'react';
-import { apiGet, apiPost } from './utils/api';
+import Button from "@mui/material/Button"
+import TextField from "@mui/material/TextField"
+import { useState } from "react"
+import { apiGet, apiPost } from "./utils/api"
 import { useNavigate } from "react-router-dom"
 
 function PollCreate() {
     const navigate = useNavigate()
-    
+
     const [showName, setShowName] = useState("")
 
     const createShow = async () => {
-        const response = (await apiPost("", {
-
-        }))
+        const response = await apiPost("", {})
         console.log("RESPONSE...")
         console.log(response)
         navigate("")
     }
 
-    return(<>
-        <TextField 
-            label="Show Name" 
-            variant="outlined" 
-            onChange={(e) => setShowName(e.target.value)}
+    return (
+        <>
+            <TextField
+                label="Show Name"
+                variant="outlined"
+                onChange={(e) => setShowName(e.target.value)}
             />
-        <Button onClick={createShow} variant="contained">
-                    Create Show
-                </Button>
-
-    </>)
+            <Button onClick={createShow} variant="contained">
+                Create Show
+            </Button>
+        </>
+    )
 }
 
 export default PollCreate

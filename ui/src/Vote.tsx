@@ -1,10 +1,5 @@
-
-
 function Vote() {
-
-    return(<>
-        Vote
-    </>)
+    return <>Vote</>
 }
 
 export default Vote
