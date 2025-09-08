@@ -8,7 +8,7 @@ from src.schemas.poll import (
     PollResponseSchema,
     PollUpdateSchema,
 )
-from src.schemas.vote import VoteCreateSchema
+from src.schemas.vote import VoteCreateSchema, VoteResponseSchema
 from src.services.poll import (
     create_poll,
     create_poll_option,
@@ -61,9 +61,10 @@ async def update_poll_option_details(
 async def poll_vote(poll_id: int, option_id: int, db: DB_SESSION):
     poll = db.get(Poll, poll_id)
     new_vote = create_vote(
+        db,
         VoteCreateSchema(
             show_id=poll.show_id, poll_id=poll_id, poll_option_id=option_id
         )
     )
 
-    return new_vote.to_pydantic()
+    return new_vote.to_pydantic(VoteResponseSchema)

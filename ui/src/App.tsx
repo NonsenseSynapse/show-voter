@@ -7,9 +7,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles"
 import Home from "./Home"
 import PollCreate from "./PollCreate"
 import PollDisplay from "./PollDisplay"
+import PollVote from "./PollVote"
 import QRGenerator from "./QRGenerator"
 import ShowCreate from "./ShowCreate"
-import Vote from "./PollVote"
 
 function App() {
     const router = createBrowserRouter([
@@ -19,7 +19,7 @@ function App() {
         },
         {
             path: "/show/:show_id/poll/:poll_id/vote",
-            element: <Vote />,
+            element: <PollVote />,
         },
         {
             path: "show/:show_id/poll/:poll_id/display",

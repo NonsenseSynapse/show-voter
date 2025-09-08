@@ -21,7 +21,7 @@ function PollCreate() {
             order: 0,
             poll_options: [{ description: optionOne }, { description: optionTwo }],
         })
-        console.log("RESPONSE...")
+        console.log("Poll Create RESPONSE...")
         console.log(response)
         navigate(`/show/${show_id}/poll/${response.id}/display`)
     }

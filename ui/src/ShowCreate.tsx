@@ -15,7 +15,7 @@ function PollCreate() {
         const response = await apiPost(`show`, {
             title: showName,
         })
-        console.log("RESPONSE...")
+        console.log("Show Create RESPONSE...")
         console.log(response)
         navigate(`/show/${response.id}/poll/create`)
     }

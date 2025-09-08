@@ -8,7 +8,7 @@ function PollDisplay() {
 
     const getPollDetails = async () => {
         const response = await apiGet(`poll/${poll_id}`)
-        console.log("RESPONSE...")
+        console.log("Poll Display RESPONSE")
         console.log(response)
     }
 
