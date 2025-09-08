@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-
 
 import { apiGet } from "./utils/api"
 
@@ -17,11 +16,7 @@ function PollDisplay() {
         getPollDetails()
     }, [])
 
-    return (
-        <>
-            Poll Display
-        </>
-    )
+    return <>Poll Display</>
 }
 
 export default PollDisplay

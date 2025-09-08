@@ -56,11 +56,14 @@ async def update_poll_option_details(
     updated_poll_option = update_poll_option(db, poll_id, option_id, poll_option)
     return updated_poll_option.to_pydantic(PollOptionResponseSchema)
 
+
 @router.post("/{poll_id}/option/{option_id}/vote")
-async def poll_vote(
-    poll_id: int, option_id: int, db: DB_SESSION
-):
+async def poll_vote(poll_id: int, option_id: int, db: DB_SESSION):
     poll = db.get(Poll, poll_id)
-    new_vote = create_vote(VoteCreateSchema(show_id=poll.show_id, poll_id=poll_id, poll_option_id=option_id))
+    new_vote = create_vote(
+        VoteCreateSchema(
+            show_id=poll.show_id, poll_id=poll_id, poll_option_id=option_id
+        )
+    )
 
     return new_vote.to_pydantic()

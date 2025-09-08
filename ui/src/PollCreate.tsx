@@ -16,13 +16,10 @@ function PollCreate() {
 
     const creatPoll = async () => {
         const response = await apiPost(`show/${show_id}/poll/create`, {
-            "show_id": show_id,
-            "description": pollQuestion,
-            "order": 0,
-            "poll_options": [
-                {"description": optionOne},
-                {"description": optionTwo}
-            ]
+            show_id: show_id,
+            description: pollQuestion,
+            order: 0,
+            poll_options: [{ description: optionOne }, { description: optionTwo }],
         })
         console.log("RESPONSE...")
         console.log(response)
@@ -31,7 +28,7 @@ function PollCreate() {
 
     return (
         <>
-             <TextField
+            <TextField
                 label="Poll Question"
                 variant="outlined"
                 onChange={(e) => setPollQuestion(e.target.value)}
