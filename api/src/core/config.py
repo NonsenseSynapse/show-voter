@@ -1,6 +1,6 @@
 import os
 
-CORS_ORIGINS = ["http://localhost:3000", "http://localhost:8080"]
+CORS_ORIGINS = ["http://localhost:3000", "http://localhost:8080", "http://192.168.1.69:3000"]
 
 DATABASE_HOST = os.getenv("DB_HOST", "localhost")
 DATABASE_PORT = os.getenv("DB_PORT", "5432")

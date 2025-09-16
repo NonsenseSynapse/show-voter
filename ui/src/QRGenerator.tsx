@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import QRCode from "react-qr-code";
 
 import { Grid } from "@mui/material"
 import Button from "@mui/material/Button"
@@ -15,9 +15,9 @@ function QRGenerator() {
 
     const generateQRCode = async (pageType: string) => {
         if (pageType == "POLL_DISPLAY") {
-            setQRUrl(`${WEB_BASE}/show/${showID}/poll/${pollId}/vote`)
-        } else if (pageType == "POLL_VOTE") {
             setQRUrl(`${WEB_BASE}/show/${showID}/poll/${pollId}/display`)
+        } else if (pageType == "POLL_VOTE") {
+            setQRUrl(`${WEB_BASE}/show/${showID}/poll/${pollId}/vote`)
         }
     }
 
@@ -51,6 +51,9 @@ function QRGenerator() {
                 <Typography variant="h5" gutterBottom>
                     {qrUrl}
                 </Typography>
+            </Grid>
+            <Grid>
+                <QRCode value={qrUrl}></QRCode>
             </Grid>
         </>
     )
