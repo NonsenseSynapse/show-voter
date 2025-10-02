@@ -6,12 +6,12 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM nginx
+FROM nginxinc/nginx-unprivileged:stable-alpine
 
 WORKDIR /app
 COPY --from=build /app/dist /app/dist
 USER root
 RUN cp -r /app/dist/* /usr/share/nginx/html
-# COPY ./nginx/default.config /etc/nginx/conf.d/
+COPY ./nginx/default.conf /etc/nginx/conf.d/
 USER nginx
 EXPOSE 8080

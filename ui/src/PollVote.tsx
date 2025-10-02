@@ -7,7 +7,7 @@ import type { PollDetails } from "./types"
 import { apiGet, apiPost } from "./utils/api"
 
 function PollVote() {
-    const { show_id, poll_id } = useParams()
+    const { poll_id } = useParams()
     const [pollDetails, setPollDetails] = useState({} as PollDetails)
 
     const getPollDetails = async () => {
