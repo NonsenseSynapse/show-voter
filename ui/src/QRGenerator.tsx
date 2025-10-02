@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
 
 import Button from "@mui/material/Button"
 import TextField from "@mui/material/TextField"
@@ -8,11 +7,10 @@ import Typography from "@mui/material/Typography"
 import { WEB_BASE } from "./constants"
 
 function QRGenerator() {
-    const navigate = useNavigate()
 
     const [showID, setShowID] = useState("")
     const [pollId, setPollId] = useState("")
-    const [qrUrl, setQRUrl] = useState("")
+    const [_qrUrl, setQRUrl] = useState("")
 
     const generateQRCode = async (pageType: string) => {
         if (pageType == "POLL_DISPLAY") {

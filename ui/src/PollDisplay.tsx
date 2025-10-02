@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useParams } from "react-router-dom"
 
 import { apiGet } from "./utils/api"
 
 function PollDisplay() {
-    const { show_id, poll_id } = useParams()
+    const { poll_id } = useParams()
 
     const getPollDetails = async () => {
         const response = await apiGet(`poll/${poll_id}`)
