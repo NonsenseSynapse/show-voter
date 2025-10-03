@@ -1,6 +1,10 @@
 from sqlalchemy.orm import Session
 from src.models.show import Show
-from src.schemas.show import ShowCreateSchema, ShowResponseDetailsSchema
+from src.schemas.show import (
+    ShowCreateSchema,
+    ShowResponseDetailsSchema,
+    ShowResponseSchema,
+)
 from src.services.poll import serialize_poll
 
 
@@ -28,3 +32,8 @@ def serialize_show_details(show: Show):
         date_created=show.date_created,
         polls=[serialize_poll(poll) for poll in show.polls],
     )
+
+
+def get_latest_shows(db: Session):
+    shows = db.query(Show).order_by(Show.date_created.desc()).limit(10).all()
+    return [show.to_pydantic(ShowResponseSchema) for show in shows]

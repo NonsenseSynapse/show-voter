@@ -3,7 +3,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Grid from "@mui/material/Grid"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 
+import Admin from "./Admin"
 import Home from "./Home"
+import ManageShow from "./ManageShow"
 import PollCreate from "./PollCreate"
 import PollDisplay from "./PollDisplay"
 import PollVote from "./PollVote"
@@ -35,6 +37,14 @@ function App() {
         {
             path: "qr/create",
             element: <QRGenerator />,
+        },
+        {
+            path: "admin",
+            element: <Admin />,
+        },
+        {
+            path: "admin/show/:show_id",
+            element: <ManageShow />,
         },
     ])
 
