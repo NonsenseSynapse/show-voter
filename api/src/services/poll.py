@@ -161,3 +161,18 @@ def create_poll_and_options(db: Session, poll_and_options: PollAndOptionsCreateS
             for poll_option in poll.poll_options
         ],
     )
+
+
+def activate_display_poll(db: Session, poll_id: int):
+    poll = db.get(Poll, poll_id)
+    if not poll:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unable to display poll with ID {poll_id} because it does not exist",
+        )
+
+    db.query(Poll).filter_by(show_id=poll.show_id).update({"is_display": False})
+    poll.is_display = True
+    db.commit()
+
+    return poll

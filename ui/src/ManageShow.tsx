@@ -54,6 +54,11 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
         setIsEdit(!isEdit)
     }
 
+    const handleDisplayPoll = async () => {
+        const response = (await apiPost(`poll/${pollDetails.id}/display`, {})) as PollDetails
+        console.log(response)
+    }
+
     const handleToggleVisibility = async (optionId: number) => {
         const newPollOptions = pollOptions.map((pollOption) => {
             if (pollOption.id === optionId) {
@@ -94,6 +99,7 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
         pollTitleWrapper: "mb-4",
         pollOptionWrapper: "mb-2",
         visibilityButton: "cursor-pointer",
+        disableDisplayWrapper: "mb-4",
     }
 
     return (
@@ -103,9 +109,16 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
                 aria-controls="panel3-content"
                 id="panel3-header"
             >
-                <Typography component="span">{pollTitle}</Typography>
+                <Typography component="span">
+                    {pollTitle} ({pollDetails.is_display ? "DISPLAY" : "HIDDEN"})
+                </Typography>
             </AccordionSummary>
             <AccordionDetails>
+                <Grid container className={STYLES.disableDisplayWrapper} spacing={4}>
+                    <Button variant="contained" color="primary" onClick={handleDisplayPoll}>
+                        Display
+                    </Button>
+                </Grid>
                 <Grid className={STYLES.pollTitleWrapper}>
                     <TextField
                         fullWidth
