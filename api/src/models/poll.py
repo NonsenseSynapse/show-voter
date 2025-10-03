@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from src.db.database import DbBase
@@ -10,6 +10,8 @@ class Poll(DbBase):
     id = Column(Integer, primary_key=True, index=True)
     description = Column(String)
     order = Column(Integer)
+    is_active = Column(Boolean, default=True)
+    is_display = Column(Boolean, default=False)
     date_created = Column(DateTime, default=func.now())
 
     show_id = Column(Integer, ForeignKey(Show.id))
@@ -23,6 +25,7 @@ class PollOption(DbBase):
     __tablename__ = "poll_option"
     id = Column(Integer, primary_key=True, index=True)
     description = Column(String)
+    is_active = Column(Boolean, default=True)
     date_created = Column(DateTime, default=func.now())
     date_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 

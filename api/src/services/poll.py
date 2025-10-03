@@ -37,8 +37,25 @@ def update_poll(db: Session, poll_id: int, poll: PollUpdateSchema):
         raise HTTPException(status_code=404, detail=f"Poll {poll_id} not found")
 
     existing_poll.description = poll.description
-    existing_poll.order = poll.order
-    db.merge(existing_poll)
+
+    existing_options = existing_poll.poll_options
+    id_to_option = {option.id: option for option in existing_options}
+
+    for updated_option in poll.poll_options:
+        if not updated_option.id:
+            new_option = PollOption(
+                poll_id=existing_poll.id,
+                is_active=True,
+                description=updated_option.description,
+            )
+            db.add(new_option)
+        elif updated_option.id and updated_option.id in id_to_option:
+            existing_option = id_to_option[updated_option.id]
+            existing_option.description = updated_option.description
+            existing_option.is_active = updated_option.is_active
+        else:
+            print("Somehow got bad option: ", updated_option.id)
+
     db.commit()
     db.refresh(existing_poll)
     return existing_poll
@@ -97,6 +114,8 @@ def serialize_poll(poll: Poll):
         description=poll.description,
         order=poll.order,
         show_id=poll.show_id,
+        is_active=poll.is_active,
+        is_display=poll.is_display,
         date_created=poll.date_created,
         poll_options=[
             poll_option.to_pydantic(PollOptionResponseSchema)
