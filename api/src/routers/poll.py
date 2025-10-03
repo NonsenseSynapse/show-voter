@@ -10,6 +10,7 @@ from src.schemas.poll import (
 )
 from src.schemas.vote import VoteCreateSchema, VoteResponseSchema
 from src.services.poll import (
+    activate_display_poll,
     create_poll,
     create_poll_option,
     serialize_poll,
@@ -38,6 +39,12 @@ async def create_new_poll(poll: PollCreateSchema, db: DB_SESSION):
 @router.post("/{poll_id}")
 async def update_poll_details(poll_id, poll_option: PollUpdateSchema, db: DB_SESSION):
     updated_poll = update_poll(db, poll_id, poll_option)
+    return serialize_poll(updated_poll)
+
+
+@router.post("/{poll_id}/display")
+async def display_poll(poll_id, db: DB_SESSION):
+    updated_poll = activate_display_poll(db, poll_id)
     return serialize_poll(updated_poll)
 
 

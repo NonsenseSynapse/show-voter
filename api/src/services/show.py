@@ -25,12 +25,13 @@ def update_show(db: Session, existing_show: Show, show: ShowCreateSchema):
 
 
 def serialize_show_details(show: Show):
+    sorted_polls = sorted(show.polls, key=lambda poll: poll.id)
     return ShowResponseDetailsSchema(
         id=show.id,
         title=show.title,
         current_poll_id=show.current_poll_id,
         date_created=show.date_created,
-        polls=[serialize_poll(poll) for poll in show.polls],
+        polls=[serialize_poll(poll) for poll in sorted_polls],
     )
 
 
