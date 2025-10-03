@@ -1,13 +1,51 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 
-import { Button, Grid, Link, TextField, Typography } from "@mui/material"
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import {
+    Accordion,
+    AccordionActions,
+    AccordionDetails,
+    AccordionSummary,
+    Button,
+    Grid,
+    Link,
+    TextField,
+    Typography,
+} from "@mui/material"
 
-import type { PollDetails, ShowDetails } from "./types"
+import type { PollDetails, PollOption, ShowDetails } from "./types"
 import { apiGet, apiPost } from "./utils/api"
 
 function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
-    return <Grid size={12}>{pollDetails.description}</Grid>
+    const [pollOptions, setPollOptions] = useState([] as PollOption[])
+
+    const updatePoll = () => {}
+
+    useEffect(() => {
+        setPollOptions(pollDetails.poll_options)
+    }, [])
+
+    return (
+        <Accordion>
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel3-content"
+                id="panel3-header"
+            >
+                <Typography component="span">{pollDetails.description}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                {pollOptions.map((pollOption) => {
+                    return <Grid>{pollOption.description}</Grid>
+                })}
+            </AccordionDetails>
+            <AccordionActions>
+                <Button>Cancel</Button>
+                <Button>Agree</Button>
+            </AccordionActions>
+        </Accordion>
+    )
 }
 
 function ManageShow() {
