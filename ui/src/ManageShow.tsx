@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import VisibilityIcon from "@mui/icons-material/Visibility"
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff"
 import {
     Accordion,
     AccordionActions,
@@ -52,6 +54,16 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
         setIsEdit(!isEdit)
     }
 
+    const handleToggleVisibility = async (optionId: number) => {
+        const newPollOptions = pollOptions.map((pollOption) => {
+            if (pollOption.id === optionId) {
+                pollOption.is_active = !pollOption.is_active
+            }
+            return pollOption
+        })
+        setPollOptions(newPollOptions)
+    }
+
     const addPollOption = () => {
         const newPollOptions = [...pollOptions]
         newPollOptions.push({
@@ -79,7 +91,9 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
     }, [])
 
     const STYLES = {
+        pollTitleWrapper: "mb-4",
         pollOptionWrapper: "mb-2",
+        visibilityButton: "cursor-pointer",
     }
 
     return (
@@ -89,32 +103,66 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
                 aria-controls="panel3-content"
                 id="panel3-header"
             >
-                <Typography component="span">{pollDetails.description}</Typography>
+                <Typography component="span">{pollTitle}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-                <TextField
-                    label="Poll Title"
-                    variant="outlined"
-                    value={pollTitle}
-                    disabled={!isEdit}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                        setPollTitle(event.target.value)
-                    }}
-                />
+                <Grid className={STYLES.pollTitleWrapper}>
+                    <TextField
+                        fullWidth
+                        label="Poll Title"
+                        variant="outlined"
+                        value={pollTitle}
+                        disabled={!isEdit}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            setPollTitle(event.target.value)
+                        }}
+                    />
+                </Grid>
+
                 {pollOptions.map((pollOption) => {
                     return (
-                        <Grid className={STYLES.pollOptionWrapper}>
-                            <TextField
-                                variant="outlined"
-                                value={pollOption.description}
-                                disabled={!isEdit}
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                    handleSetPollOption(
-                                        pollOption.id || newOptionIndex,
-                                        event.target.value,
-                                    )
-                                }}
-                            />
+                        <Grid container size={12} spacing={2} alignItems="center">
+                            <Grid className={STYLES.pollOptionWrapper} size={9}>
+                                <TextField
+                                    fullWidth
+                                    variant="outlined"
+                                    value={pollOption.description}
+                                    disabled={!isEdit}
+                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                        handleSetPollOption(
+                                            pollOption.id || newOptionIndex,
+                                            event.target.value,
+                                        )
+                                    }}
+                                />
+                            </Grid>
+                            <Grid size={3}>
+                                {pollOption.is_active ? (
+                                    <>
+                                        <VisibilityIcon
+                                            color="success"
+                                            className={STYLES.visibilityButton}
+                                            onClick={() =>
+                                                handleToggleVisibility(
+                                                    pollOption.id || newOptionIndex,
+                                                )
+                                            }
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        <VisibilityOffIcon
+                                            color="error"
+                                            className={STYLES.visibilityButton}
+                                            onClick={() =>
+                                                handleToggleVisibility(
+                                                    pollOption.id || newOptionIndex,
+                                                )
+                                            }
+                                        />
+                                    </>
+                                )}
+                            </Grid>
                         </Grid>
                     )
                 })}
