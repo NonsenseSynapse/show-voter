@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from "react"
+import { QRCode } from "react-qrcode-logo"
 import { useParams } from "react-router-dom"
 
 import { Grid, Typography } from "@mui/material"
 import { PieChart } from "@mui/x-charts/PieChart"
 
+import { ROUTER_ENCRYPTION, ROUTER_NETWORK, ROUTER_PASSWORD, WEB_BASE } from "./constants"
 import type { PollDetails } from "./types"
 import { apiGet } from "./utils/api"
 
@@ -14,13 +16,16 @@ type PieChartData = {
 }
 
 function PollDisplay() {
-    const { poll_id } = useParams()
+    const { show_id, poll_id } = useParams()
 
     const POLL_INTERVAL = 3
 
     const [pollDetails, setPollDetails] = useState<PollDetails>({} as PollDetails)
     const [voteOptions, setVoteOptions] = useState({} as Record<any, string>)
     const [chartData, setChartData] = useState([] as PieChartData[])
+
+    const voteUrl = `${WEB_BASE}/show/${show_id}/poll/${poll_id}/vote`
+    const wifiUrl = `WIFI:T:${ROUTER_ENCRYPTION};S:${ROUTER_NETWORK};P:${ROUTER_PASSWORD};`
 
     const getPollDetails = async () => {
         const response = (await apiGet(`poll/${poll_id}`)) as PollDetails
@@ -65,6 +70,7 @@ function PollDisplay() {
 
     useEffect(() => {
         getPollDetails()
+        pollVoteUpdates()
     }, [])
 
     useEffect(() => {
@@ -77,17 +83,26 @@ function PollDisplay() {
     }, [pollVoteUpdates])
 
     return (
-        <Grid>
-            <Typography>Poll Display ({pollDetails.id})</Typography>
-            <PieChart
-                series={[
-                    {
-                        data: chartData,
-                    },
-                ]}
-                width={400}
-                height={400}
-            />
+        <Grid container size={12} display="flex" alignItems="center" justifyContent="center">
+            <Grid size={4}>
+                <Typography variant="h3">Vote</Typography>
+                <QRCode value={voteUrl} size={300} />
+            </Grid>
+            <Grid size={4}>
+                <PieChart
+                    series={[
+                        {
+                            data: chartData,
+                        },
+                    ]}
+                    width={400}
+                    height={400}
+                />
+            </Grid>
+            <Grid size={4}>
+                <Typography variant="h3">WiFi</Typography>
+                <QRCode value={wifiUrl} size={300} />
+            </Grid>
         </Grid>
     )
 }
