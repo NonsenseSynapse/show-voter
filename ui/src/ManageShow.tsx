@@ -9,7 +9,6 @@ import {
     AccordionSummary,
     Button,
     Grid,
-    Link,
     TextField,
     Typography,
 } from "@mui/material"
@@ -18,13 +17,70 @@ import type { PollDetails, PollOption, ShowDetails } from "./types"
 import { apiGet, apiPost } from "./utils/api"
 
 function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
+    const [pollTitle, setPollTitle] = useState("")
     const [pollOptions, setPollOptions] = useState([] as PollOption[])
+    const [newOptionIndex, setNewOptionIndex] = useState(-1)
+    const [isEdit, setIsEdit] = useState(false)
 
-    const updatePoll = () => {}
+    const updatePoll = async () => {
+        setIsEdit(false)
+
+        const payload = {
+            description: pollTitle,
+            poll_options: pollOptions.map((pollOption) => {
+                if (pollOption.id && pollOption.id < 0) {
+                    return {
+                        id: undefined,
+                        description: pollOption.description,
+                        is_active: pollOption.is_active,
+                    }
+                } else {
+                    return {
+                        id: pollOption.id,
+                        description: pollOption.description,
+                        is_active: pollOption.is_active,
+                    }
+                }
+            }),
+        }
+        console.log("PAYLOAD IS...", payload)
+        const response = (await apiPost(`poll/${pollDetails.id}`, payload)) as PollDetails
+        console.log(response)
+    }
+
+    const handleToggleEdit = () => {
+        setIsEdit(!isEdit)
+    }
+
+    const addPollOption = () => {
+        const newPollOptions = [...pollOptions]
+        newPollOptions.push({
+            id: newOptionIndex,
+            description: "",
+            is_active: true,
+        })
+        setNewOptionIndex(newOptionIndex - 1)
+        setPollOptions(newPollOptions)
+    }
+
+    const handleSetPollOption = (optionId: number, newDescription: string) => {
+        const newPollOptions = pollOptions.map((pollOption) => {
+            if (pollOption.id === optionId) {
+                pollOption.description = newDescription
+            }
+            return pollOption
+        })
+        setPollOptions(newPollOptions)
+    }
 
     useEffect(() => {
         setPollOptions(pollDetails.poll_options)
+        setPollTitle(pollDetails.description)
     }, [])
+
+    const STYLES = {
+        pollOptionWrapper: "mb-2",
+    }
 
     return (
         <Accordion>
@@ -36,13 +92,47 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
                 <Typography component="span">{pollDetails.description}</Typography>
             </AccordionSummary>
             <AccordionDetails>
+                <TextField
+                    label="Poll Title"
+                    variant="outlined"
+                    value={pollTitle}
+                    disabled={!isEdit}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        setPollTitle(event.target.value)
+                    }}
+                />
                 {pollOptions.map((pollOption) => {
-                    return <Grid>{pollOption.description}</Grid>
+                    return (
+                        <Grid className={STYLES.pollOptionWrapper}>
+                            <TextField
+                                variant="outlined"
+                                value={pollOption.description}
+                                disabled={!isEdit}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    handleSetPollOption(
+                                        pollOption.id || newOptionIndex,
+                                        event.target.value,
+                                    )
+                                }}
+                            />
+                        </Grid>
+                    )
                 })}
             </AccordionDetails>
+            <Button disabled={!isEdit} onClick={addPollOption}>
+                Add Option
+            </Button>
             <AccordionActions>
-                <Button>Cancel</Button>
-                <Button>Agree</Button>
+                <Button
+                    variant="contained"
+                    color={isEdit ? "error" : "primary"}
+                    onClick={handleToggleEdit}
+                >
+                    {isEdit ? "Cancel" : "Edit"}
+                </Button>
+                <Button disabled={!isEdit} variant="contained" color="primary" onClick={updatePoll}>
+                    Update
+                </Button>
             </AccordionActions>
         </Accordion>
     )
