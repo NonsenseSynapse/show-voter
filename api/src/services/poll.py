@@ -51,6 +51,13 @@ def update_poll(db: Session, poll_id: int, poll: PollUpdateSchema):
             db.add(new_option)
         elif updated_option.id and updated_option.id in id_to_option:
             existing_option = id_to_option[updated_option.id]
+            if updated_option.is_deleted and existing_option.can_delete():
+                print(
+                    f"DELETING PollOption {existing_option.id}, confirmed to have 0 votes."
+                )
+                db.delete(existing_option)
+                continue
+
             existing_option.description = updated_option.description
             existing_option.is_active = updated_option.is_active
         else:
@@ -114,7 +121,6 @@ def serialize_poll(poll: Poll):
         description=poll.description,
         order=poll.order,
         show_id=poll.show_id,
-        is_active=poll.is_active,
         is_display=poll.is_display,
         date_created=poll.date_created,
         poll_options=[

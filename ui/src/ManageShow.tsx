@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 
+import DeleteIcon from "@mui/icons-material/Delete"
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 import VisibilityIcon from "@mui/icons-material/Visibility"
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff"
@@ -41,12 +42,14 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
                         id: undefined,
                         description: pollOption.description,
                         is_active: pollOption.is_active,
+                        is_deleted: pollOption.is_deleted || false,
                     }
                 } else {
                     return {
                         id: pollOption.id,
                         description: pollOption.description,
                         is_active: pollOption.is_active,
+                        is_deleted: pollOption.is_deleted || false,
                     }
                 }
             }),
@@ -96,6 +99,17 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
         setPollOptions(newPollOptions)
     }
 
+    const deletePollOption = (optionId: number) => {
+        console.log("DELETE CENTER USA")
+        const newPollOptions = pollOptions.map((pollOption) => {
+            if (pollOption.id === optionId) {
+                pollOption.is_deleted = true
+            }
+            return pollOption
+        })
+        setPollOptions(newPollOptions)
+    }
+
     useEffect(() => {
         setPollOptions(pollDetails.poll_options)
         setPollTitle(pollDetails.description)
@@ -104,7 +118,7 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
     const STYLES = {
         pollTitleWrapper: "mb-4",
         pollOptionWrapper: "mb-2",
-        visibilityButton: "cursor-pointer",
+        pollOptionButton: "cursor-pointer",
         disableDisplayWrapper: "mb-4",
         activePollSx: "var(--color-sky-200)",
         inactivePollSx: "var(--color-slate-200)",
@@ -166,7 +180,7 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
                                     <>
                                         <VisibilityIcon
                                             color="success"
-                                            className={STYLES.visibilityButton}
+                                            className={STYLES.pollOptionButton}
                                             onClick={() =>
                                                 handleToggleVisibility(
                                                     pollOption.id || newOptionIndex,
@@ -178,7 +192,7 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
                                     <>
                                         <VisibilityOffIcon
                                             color="error"
-                                            className={STYLES.visibilityButton}
+                                            className={STYLES.pollOptionButton}
                                             onClick={() =>
                                                 handleToggleVisibility(
                                                     pollOption.id || newOptionIndex,
@@ -187,6 +201,13 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
                                         />
                                     </>
                                 )}
+                                <DeleteIcon
+                                    color="error"
+                                    className={STYLES.pollOptionButton}
+                                    onClick={() => {
+                                        deletePollOption(pollOption.id || newOptionIndex)
+                                    }}
+                                />
                             </Grid>
                         </Grid>
                     )

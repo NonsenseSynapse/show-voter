@@ -22,7 +22,6 @@ class PollResponseSchema(BaseModel):
     description: str
     order: int
     show_id: int
-    is_active: bool
     is_display: bool
     date_created: datetime
     poll_options: Optional[List[PollOptionResponseSchema]] = []
@@ -38,6 +37,7 @@ class PollOptionUpdateSchema(BaseModel):
     id: Optional[int] = None
     description: str
     is_active: bool
+    is_deleted: Optional[bool] = False
 
 
 class PollUpdateSchema(BaseModel):
