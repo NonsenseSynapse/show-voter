@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 
+import AddIcon from "@mui/icons-material/Add"
+import DeleteIcon from "@mui/icons-material/Delete"
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import ReplayIcon from "@mui/icons-material/Replay"
 import VisibilityIcon from "@mui/icons-material/Visibility"
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff"
 import {
@@ -18,7 +21,13 @@ import {
 import type { PollDetails, PollOption, ShowDetails } from "./types"
 import { apiGet, apiPost } from "./utils/api"
 
-function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
+type ManagePollType = {
+    pollDetails: PollDetails
+    onActivatePoll: (pollId: number) => void
+    isDisplay: boolean
+}
+
+function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) {
     const [pollTitle, setPollTitle] = useState("")
     const [pollOptions, setPollOptions] = useState([] as PollOption[])
     const [newOptionIndex, setNewOptionIndex] = useState(-1)
@@ -35,12 +44,14 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
                         id: undefined,
                         description: pollOption.description,
                         is_active: pollOption.is_active,
+                        is_deleted: pollOption.is_deleted || false,
                     }
                 } else {
                     return {
                         id: pollOption.id,
                         description: pollOption.description,
                         is_active: pollOption.is_active,
+                        is_deleted: pollOption.is_deleted || false,
                     }
                 }
             }),
@@ -48,6 +59,7 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
         console.log("PAYLOAD IS...", payload)
         const response = (await apiPost(`poll/${pollDetails.id}`, payload)) as PollDetails
         console.log(response)
+        setPollOptions(response.poll_options)
     }
 
     const handleToggleEdit = () => {
@@ -56,7 +68,7 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
 
     const handleDisplayPoll = async () => {
         const response = (await apiPost(`poll/${pollDetails.id}/display`, {})) as PollDetails
-        console.log(response)
+        onActivatePoll(pollDetails.id)
     }
 
     const handleToggleVisibility = async (optionId: number) => {
@@ -90,6 +102,22 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
         setPollOptions(newPollOptions)
     }
 
+    const toggleDeletePollOption = (optionId: number) => {
+        const newPollOptions = pollOptions.map((pollOption) => {
+            if (pollOption.id === optionId) {
+                pollOption.is_deleted = !pollOption.is_deleted
+            }
+            return pollOption
+        })
+        // If a new poll option was added and deleted before it was saved, then we can fully remove
+        // it from the list, rather than sending it to the API
+        const prunedOptions = newPollOptions.filter((pollOption) => {
+            const isNew = !pollOption.id || pollOption.id < 0
+            return !(isNew && pollOption.is_deleted)
+        })
+        setPollOptions(prunedOptions)
+    }
+
     useEffect(() => {
         setPollOptions(pollDetails.poll_options)
         setPollTitle(pollDetails.description)
@@ -98,19 +126,24 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
     const STYLES = {
         pollTitleWrapper: "mb-4",
         pollOptionWrapper: "mb-2",
-        visibilityButton: "cursor-pointer",
+        pollOptionButton: "cursor-pointer",
+        pollOptionButtonDisabled: "cursor-not-allowed",
         disableDisplayWrapper: "mb-4",
+        activePollSx: "var(--color-sky-200)",
+        inactivePollSx: "var(--color-slate-200)",
     }
 
     return (
-        <Accordion>
+        <Accordion
+            sx={{ backgroundColor: isDisplay ? STYLES.activePollSx : STYLES.inactivePollSx }}
+        >
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel3-content"
                 id="panel3-header"
             >
                 <Typography component="span">
-                    {pollTitle} ({pollDetails.is_display ? "DISPLAY" : "HIDDEN"})
+                    {pollTitle || "<NEEDS TITLE>"} ({isDisplay ? "DISPLAY" : "HIDDEN"})
                 </Typography>
             </AccordionSummary>
             <AccordionDetails>
@@ -153,25 +186,80 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
                                 {pollOption.is_active ? (
                                     <>
                                         <VisibilityIcon
-                                            color="success"
-                                            className={STYLES.visibilityButton}
-                                            onClick={() =>
+                                            color={isEdit ? "success" : "disabled"}
+                                            className={
+                                                isEdit
+                                                    ? STYLES.pollOptionButton
+                                                    : STYLES.pollOptionButtonDisabled
+                                            }
+                                            onClick={() => {
+                                                if (!isEdit) {
+                                                    return
+                                                }
+
                                                 handleToggleVisibility(
                                                     pollOption.id || newOptionIndex,
                                                 )
-                                            }
+                                            }}
                                         />
                                     </>
                                 ) : (
                                     <>
                                         <VisibilityOffIcon
-                                            color="error"
-                                            className={STYLES.visibilityButton}
-                                            onClick={() =>
+                                            color={isEdit ? "error" : "disabled"}
+                                            className={
+                                                isEdit
+                                                    ? STYLES.pollOptionButton
+                                                    : STYLES.pollOptionButtonDisabled
+                                            }
+                                            onClick={() => {
+                                                if (!isEdit) {
+                                                    return
+                                                }
+
                                                 handleToggleVisibility(
                                                     pollOption.id || newOptionIndex,
                                                 )
+                                            }}
+                                        />
+                                    </>
+                                )}
+                                {pollOption.is_deleted ? (
+                                    <>
+                                        <ReplayIcon
+                                            color={isEdit ? "error" : "disabled"}
+                                            className={
+                                                isEdit
+                                                    ? STYLES.pollOptionButton
+                                                    : STYLES.pollOptionButtonDisabled
                                             }
+                                            onClick={() => {
+                                                if (!isEdit) {
+                                                    return
+                                                }
+                                                toggleDeletePollOption(
+                                                    pollOption.id || newOptionIndex,
+                                                )
+                                            }}
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        <DeleteIcon
+                                            color={isEdit ? "error" : "disabled"}
+                                            className={
+                                                isEdit
+                                                    ? STYLES.pollOptionButton
+                                                    : STYLES.pollOptionButtonDisabled
+                                            }
+                                            onClick={() => {
+                                                if (!isEdit) {
+                                                    return
+                                                }
+                                                toggleDeletePollOption(
+                                                    pollOption.id || newOptionIndex,
+                                                )
+                                            }}
                                         />
                                     </>
                                 )}
@@ -202,16 +290,23 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
 function ManageShow() {
     const { show_id } = useParams()
 
-    const [showDetails, setShowDetails] = useState({} as ShowDetails)
+    const [polls, setPolls] = useState([] as PollDetails[])
+    const [activePollId, setActivePollId] = useState(0)
     const [showTitle, setShowTitle] = useState("")
     const [displayTitle, setDisplayTitle] = useState("")
     const [isEditTitle, setIsEditTitle] = useState(false)
 
     const getShow = async () => {
         const response = (await apiGet(`show/${show_id}`)) as ShowDetails
-        setShowDetails(response)
+        setPolls(response.polls)
         setShowTitle(response.title)
         setDisplayTitle(response.title)
+
+        response.polls.map((poll) => {
+            if (poll.is_display) {
+                setActivePollId(poll.id)
+            }
+        })
     }
 
     const handleSetShowTitle = async (newTitle: string) => {
@@ -227,12 +322,28 @@ function ManageShow() {
         setIsEditTitle(false)
     }
 
+    const handleDisplayPoll = async (pollId: number) => {
+        setActivePollId(pollId)
+    }
+
+    const createNewPoll = async () => {
+        const response = (await apiPost(`poll`, {
+            show_id,
+            description: "",
+        })) as PollDetails
+
+        const updatedPolls = [...polls]
+        updatedPolls.push(response)
+        setPolls(updatedPolls)
+    }
+
     useEffect(() => {
         getShow()
     }, [])
 
     const STYLES = {
         displayTitle: "mb-8",
+        pollWrapper: "mb-8",
     }
 
     return (
@@ -287,10 +398,27 @@ function ManageShow() {
                 </Grid>
             </Grid>
 
-            <Grid size={12}>
-                {showDetails.polls?.map((poll) => {
-                    return <ManagePoll pollDetails={poll} />
+            <Grid size={12} className={STYLES.pollWrapper}>
+                {polls.map((poll) => {
+                    return (
+                        <ManagePoll
+                            key={poll.id}
+                            pollDetails={poll}
+                            isDisplay={activePollId === poll.id}
+                            onActivatePoll={handleDisplayPoll}
+                        />
+                    )
                 })}
+            </Grid>
+            <Grid container size={12} justifyContent={"center"}>
+                <Button
+                    onClick={createNewPoll}
+                    variant="outlined"
+                    color="primary"
+                    endIcon={<AddIcon />}
+                >
+                    New Poll
+                </Button>
             </Grid>
         </Grid>
     )

@@ -10,7 +10,6 @@ class Poll(DbBase):
     id = Column(Integer, primary_key=True, index=True)
     description = Column(String)
     order = Column(Integer)
-    is_active = Column(Boolean, default=True)
     is_display = Column(Boolean, default=False)
     date_created = Column(DateTime, default=func.now())
 
@@ -33,6 +32,9 @@ class PollOption(DbBase):
 
     poll = relationship("Poll", back_populates="poll_options", uselist=False)
     poll_votes = relationship("PollVote", back_populates="poll_option")
+
+    def can_delete(self):
+        return len(list(self.poll_votes)) == 0
 
 
 class PollVote(DbBase):
