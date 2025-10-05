@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom"
 
 import DeleteIcon from "@mui/icons-material/Delete"
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import ReplayIcon from "@mui/icons-material/Replay"
 import VisibilityIcon from "@mui/icons-material/Visibility"
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff"
 import {
@@ -57,6 +58,7 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
         console.log("PAYLOAD IS...", payload)
         const response = (await apiPost(`poll/${pollDetails.id}`, payload)) as PollDetails
         console.log(response)
+        setPollOptions(response.poll_options)
     }
 
     const handleToggleEdit = () => {
@@ -99,15 +101,20 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
         setPollOptions(newPollOptions)
     }
 
-    const deletePollOption = (optionId: number) => {
-        console.log("DELETE CENTER USA")
+    const toggleDeletePollOption = (optionId: number) => {
         const newPollOptions = pollOptions.map((pollOption) => {
             if (pollOption.id === optionId) {
-                pollOption.is_deleted = true
+                pollOption.is_deleted = !pollOption.is_deleted
             }
             return pollOption
         })
-        setPollOptions(newPollOptions)
+        // If a new poll option was added and deleted before it was saved, then we can fully remove
+        // it from the list, rather than sending it to the API
+        const prunedOptions = newPollOptions.filter((pollOption) => {
+            const isNew = !pollOption.id || pollOption.id < 0
+            return !(isNew && pollOption.is_deleted)
+        })
+        setPollOptions(prunedOptions)
     }
 
     useEffect(() => {
@@ -119,6 +126,7 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
         pollTitleWrapper: "mb-4",
         pollOptionWrapper: "mb-2",
         pollOptionButton: "cursor-pointer",
+        pollOptionButtonDisabled: "cursor-not-allowed",
         disableDisplayWrapper: "mb-4",
         activePollSx: "var(--color-sky-200)",
         inactivePollSx: "var(--color-slate-200)",
@@ -126,7 +134,6 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
 
     return (
         <Accordion
-            // sx={{backgroundColor: pollDetails.is_display ? STYLES.activePollSx : STYLES.inactivePollSx}}>
             sx={{ backgroundColor: isDisplay ? STYLES.activePollSx : STYLES.inactivePollSx }}
         >
             <AccordionSummary
@@ -135,7 +142,6 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
                 id="panel3-header"
             >
                 <Typography component="span">
-                    {/* {pollTitle} ({pollDetails.is_display ? "DISPLAY" : "HIDDEN"}) */}
                     {pollTitle} ({isDisplay ? "DISPLAY" : "HIDDEN"})
                 </Typography>
             </AccordionSummary>
@@ -179,35 +185,83 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
                                 {pollOption.is_active ? (
                                     <>
                                         <VisibilityIcon
-                                            color="success"
-                                            className={STYLES.pollOptionButton}
-                                            onClick={() =>
+                                            color={isEdit ? "success" : "disabled"}
+                                            className={
+                                                isEdit
+                                                    ? STYLES.pollOptionButton
+                                                    : STYLES.pollOptionButtonDisabled
+                                            }
+                                            onClick={() => {
+                                                if (!isEdit) {
+                                                    return
+                                                }
+
                                                 handleToggleVisibility(
                                                     pollOption.id || newOptionIndex,
                                                 )
-                                            }
+                                            }}
                                         />
                                     </>
                                 ) : (
                                     <>
                                         <VisibilityOffIcon
-                                            color="error"
-                                            className={STYLES.pollOptionButton}
-                                            onClick={() =>
+                                            color={isEdit ? "error" : "disabled"}
+                                            className={
+                                                isEdit
+                                                    ? STYLES.pollOptionButton
+                                                    : STYLES.pollOptionButtonDisabled
+                                            }
+                                            onClick={() => {
+                                                if (!isEdit) {
+                                                    return
+                                                }
+
                                                 handleToggleVisibility(
                                                     pollOption.id || newOptionIndex,
                                                 )
-                                            }
+                                            }}
                                         />
                                     </>
                                 )}
-                                <DeleteIcon
-                                    color="error"
-                                    className={STYLES.pollOptionButton}
-                                    onClick={() => {
-                                        deletePollOption(pollOption.id || newOptionIndex)
-                                    }}
-                                />
+                                {pollOption.is_deleted ? (
+                                    <>
+                                        <ReplayIcon
+                                            color={isEdit ? "error" : "disabled"}
+                                            className={
+                                                isEdit
+                                                    ? STYLES.pollOptionButton
+                                                    : STYLES.pollOptionButtonDisabled
+                                            }
+                                            onClick={() => {
+                                                if (!isEdit) {
+                                                    return
+                                                }
+                                                toggleDeletePollOption(
+                                                    pollOption.id || newOptionIndex,
+                                                )
+                                            }}
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        <DeleteIcon
+                                            color={isEdit ? "error" : "disabled"}
+                                            className={
+                                                isEdit
+                                                    ? STYLES.pollOptionButton
+                                                    : STYLES.pollOptionButtonDisabled
+                                            }
+                                            onClick={() => {
+                                                if (!isEdit) {
+                                                    return
+                                                }
+                                                toggleDeletePollOption(
+                                                    pollOption.id || newOptionIndex,
+                                                )
+                                            }}
+                                        />
+                                    </>
+                                )}
                             </Grid>
                         </Grid>
                     )
