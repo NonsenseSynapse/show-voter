@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 
+import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 import ReplayIcon from "@mui/icons-material/Replay"
@@ -142,7 +143,7 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
                 id="panel3-header"
             >
                 <Typography component="span">
-                    {pollTitle} ({isDisplay ? "DISPLAY" : "HIDDEN"})
+                    {pollTitle || "<NEEDS TITLE>"} ({isDisplay ? "DISPLAY" : "HIDDEN"})
                 </Typography>
             </AccordionSummary>
             <AccordionDetails>
@@ -289,7 +290,6 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
 function ManageShow() {
     const { show_id } = useParams()
 
-    // const [showDetails, setShowDetails] = useState({} as ShowDetails)
     const [polls, setPolls] = useState([] as PollDetails[])
     const [activePollId, setActivePollId] = useState(0)
     const [showTitle, setShowTitle] = useState("")
@@ -326,12 +326,24 @@ function ManageShow() {
         setActivePollId(pollId)
     }
 
+    const createNewPoll = async () => {
+        const response = (await apiPost(`poll`, {
+            show_id,
+            description: "",
+        })) as PollDetails
+
+        const updatedPolls = [...polls]
+        updatedPolls.push(response)
+        setPolls(updatedPolls)
+    }
+
     useEffect(() => {
         getShow()
     }, [])
 
     const STYLES = {
         displayTitle: "mb-8",
+        pollWrapper: "mb-8",
     }
 
     return (
@@ -386,7 +398,7 @@ function ManageShow() {
                 </Grid>
             </Grid>
 
-            <Grid size={12}>
+            <Grid size={12} className={STYLES.pollWrapper}>
                 {polls.map((poll) => {
                     return (
                         <ManagePoll
@@ -397,6 +409,16 @@ function ManageShow() {
                         />
                     )
                 })}
+            </Grid>
+            <Grid container size={12} justifyContent={"center"}>
+                <Button
+                    onClick={createNewPoll}
+                    variant="outlined"
+                    color="primary"
+                    endIcon={<AddIcon />}
+                >
+                    New Poll
+                </Button>
             </Grid>
         </Grid>
     )
