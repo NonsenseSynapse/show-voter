@@ -18,7 +18,13 @@ import {
 import type { PollDetails, PollOption, ShowDetails } from "./types"
 import { apiGet, apiPost } from "./utils/api"
 
-function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
+type ManagePollType = {
+    pollDetails: PollDetails
+    onActivatePoll: (pollId: number) => void
+    isDisplay: boolean
+}
+
+function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) {
     const [pollTitle, setPollTitle] = useState("")
     const [pollOptions, setPollOptions] = useState([] as PollOption[])
     const [newOptionIndex, setNewOptionIndex] = useState(-1)
@@ -56,7 +62,7 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
 
     const handleDisplayPoll = async () => {
         const response = (await apiPost(`poll/${pollDetails.id}/display`, {})) as PollDetails
-        console.log(response)
+        onActivatePoll(pollDetails.id)
     }
 
     const handleToggleVisibility = async (optionId: number) => {
@@ -100,17 +106,23 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
         pollOptionWrapper: "mb-2",
         visibilityButton: "cursor-pointer",
         disableDisplayWrapper: "mb-4",
+        activePollSx: "var(--color-sky-200)",
+        inactivePollSx: "var(--color-slate-200)",
     }
 
     return (
-        <Accordion>
+        <Accordion
+            // sx={{backgroundColor: pollDetails.is_display ? STYLES.activePollSx : STYLES.inactivePollSx}}>
+            sx={{ backgroundColor: isDisplay ? STYLES.activePollSx : STYLES.inactivePollSx }}
+        >
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel3-content"
                 id="panel3-header"
             >
                 <Typography component="span">
-                    {pollTitle} ({pollDetails.is_display ? "DISPLAY" : "HIDDEN"})
+                    {/* {pollTitle} ({pollDetails.is_display ? "DISPLAY" : "HIDDEN"}) */}
+                    {pollTitle} ({isDisplay ? "DISPLAY" : "HIDDEN"})
                 </Typography>
             </AccordionSummary>
             <AccordionDetails>
@@ -202,16 +214,24 @@ function ManagePoll({ pollDetails }: { pollDetails: PollDetails }) {
 function ManageShow() {
     const { show_id } = useParams()
 
-    const [showDetails, setShowDetails] = useState({} as ShowDetails)
+    // const [showDetails, setShowDetails] = useState({} as ShowDetails)
+    const [polls, setPolls] = useState([] as PollDetails[])
+    const [activePollId, setActivePollId] = useState(0)
     const [showTitle, setShowTitle] = useState("")
     const [displayTitle, setDisplayTitle] = useState("")
     const [isEditTitle, setIsEditTitle] = useState(false)
 
     const getShow = async () => {
         const response = (await apiGet(`show/${show_id}`)) as ShowDetails
-        setShowDetails(response)
+        setPolls(response.polls)
         setShowTitle(response.title)
         setDisplayTitle(response.title)
+
+        response.polls.map((poll) => {
+            if (poll.is_display) {
+                setActivePollId(poll.id)
+            }
+        })
     }
 
     const handleSetShowTitle = async (newTitle: string) => {
@@ -225,6 +245,10 @@ function ManageShow() {
         console.log(response)
         setDisplayTitle(response.title)
         setIsEditTitle(false)
+    }
+
+    const handleDisplayPoll = async (pollId: number) => {
+        setActivePollId(pollId)
     }
 
     useEffect(() => {
@@ -288,8 +312,15 @@ function ManageShow() {
             </Grid>
 
             <Grid size={12}>
-                {showDetails.polls?.map((poll) => {
-                    return <ManagePoll pollDetails={poll} />
+                {polls.map((poll) => {
+                    return (
+                        <ManagePoll
+                            key={poll.id}
+                            pollDetails={poll}
+                            isDisplay={activePollId === poll.id}
+                            onActivatePoll={handleDisplayPoll}
+                        />
+                    )
                 })}
             </Grid>
         </Grid>
