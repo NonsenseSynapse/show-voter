@@ -20,6 +20,7 @@ function PollDisplay() {
 
     const POLL_INTERVAL = 3
 
+    const [pollDescription, setPollDescription] = useState("")
     const [voteOptions, setVoteOptions] = useState({} as Record<any, string>)
     const [chartData, setChartData] = useState([] as PieChartData[])
     const voteUrl = `${WEB_BASE}/show/${show_id}/vote`
@@ -30,6 +31,8 @@ function PollDisplay() {
         const response = (await apiGet(`show/${show_id}/poll/display`)) as PollDetails
         console.log("Poll Display RESPONSE")
         console.log(response)
+
+        setPollDescription(response.description)
 
         const optionsMap = {} as Record<number, string>
         for (let option of response.poll_options) {
@@ -93,8 +96,15 @@ function PollDisplay() {
         }
     }, [pollVoteUpdates])
 
+    const STYLES = {
+        pollDescription: "mb-8",
+    }
+
     return (
         <Grid container size={12} display="flex" alignItems="center" justifyContent="center">
+            <Grid className={STYLES.pollDescription} size={12} textAlign={"center"}>
+                <Typography variant="h4">{pollDescription}</Typography>
+            </Grid>
             <Grid size={4}>
                 <Typography variant="h3">Vote</Typography>
                 <QRCode value={voteUrl} size={300} />
