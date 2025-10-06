@@ -32,6 +32,9 @@ services:
     command: uv run fastapi run main.py
     environment:
       DB_HOST: "db"
+  api-prod:
+    extends: api
+    command: uv run fastapi run --workers 8 main.py
   db:
     image: postgres:16.6
     restart: always
