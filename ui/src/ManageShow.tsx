@@ -67,7 +67,7 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
     }
 
     const handleDisplayPoll = async () => {
-        const response = (await apiPost(`poll/${pollDetails.id}/display`, {})) as PollDetails
+        await apiPost(`poll/${pollDetails.id}/display`, {})
         onActivatePoll(pollDetails.id)
     }
 

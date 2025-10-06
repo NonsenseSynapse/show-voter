@@ -33,7 +33,9 @@ function PollDisplay() {
 
         const optionsMap = {} as Record<number, string>
         for (let option of response.poll_options) {
-            optionsMap[option.id] = option.description
+            if (option.id) {
+                optionsMap[option.id] = option.description
+            }
         }
 
         setVoteOptions(optionsMap)
@@ -69,7 +71,9 @@ function PollDisplay() {
         const response = (await apiGet(`show/${show_id}/poll/display`)) as PollDetails
         const optionsMap = {} as Record<number, string>
         for (let option of response.poll_options) {
-            optionsMap[option.id] = option.description
+            if (option.id) {
+                optionsMap[option.id] = option.description
+            }
         }
 
         setVoteOptions(optionsMap)
