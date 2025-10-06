@@ -13,3 +13,9 @@ class Show(DbBase):
     current_poll_id = Column(Integer)
 
     polls = relationship("Poll")
+
+    @property
+    def display_poll(self):
+        for poll in self.polls:
+            if poll.is_display:
+                return poll
