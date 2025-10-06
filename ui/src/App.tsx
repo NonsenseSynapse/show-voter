@@ -19,11 +19,11 @@ function App() {
             element: <Home />,
         },
         {
-            path: "/show/:show_id/poll/:poll_id/vote",
+            path: "/show/:show_id/vote",
             element: <PollVote />,
         },
         {
-            path: "show/:show_id/poll/:poll_id/display",
+            path: "show/:show_id/display",
             element: <PollDisplay />,
         },
         {

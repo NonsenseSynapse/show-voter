@@ -20,7 +20,6 @@ function PollDisplay() {
 
     const POLL_INTERVAL = 3
 
-    const [pollDetails, setPollDetails] = useState<PollDetails>({} as PollDetails)
     const [voteOptions, setVoteOptions] = useState({} as Record<any, string>)
     const [chartData, setChartData] = useState([] as PieChartData[])
 
@@ -31,7 +30,7 @@ function PollDisplay() {
         const response = (await apiGet(`poll/${poll_id}`)) as PollDetails
         console.log("Poll Display RESPONSE")
         console.log(response)
-        setPollDetails(response)
+        // setPollDetails(response)
 
         const optionsMap = {} as Record<number, string>
         for (let option of response.poll_options) {
@@ -64,7 +63,7 @@ function PollDisplay() {
     }
 
     const pollVoteUpdates = useCallback(async () => {
-        const response = (await apiGet(`poll/${poll_id}`)) as PollDetails
+        const response = (await apiGet(`show/${show_id}/poll/display`)) as PollDetails
         processChartData(response)
     }, [voteOptions])
 
