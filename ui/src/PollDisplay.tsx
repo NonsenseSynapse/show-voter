@@ -16,21 +16,20 @@ type PieChartData = {
 }
 
 function PollDisplay() {
-    const { show_id, poll_id } = useParams()
+    const { show_id } = useParams()
 
     const POLL_INTERVAL = 3
 
     const [voteOptions, setVoteOptions] = useState({} as Record<any, string>)
     const [chartData, setChartData] = useState([] as PieChartData[])
+    const voteUrl = `${WEB_BASE}/show/${show_id}/vote`
 
-    const voteUrl = `${WEB_BASE}/show/${show_id}/poll/${poll_id}/vote`
     const wifiUrl = `WIFI:T:${ROUTER_ENCRYPTION};S:${ROUTER_NETWORK};P:${ROUTER_PASSWORD};`
 
     const getPollDetails = async () => {
-        const response = (await apiGet(`poll/${poll_id}`)) as PollDetails
+        const response = (await apiGet(`show/${show_id}/poll/display`)) as PollDetails
         console.log("Poll Display RESPONSE")
         console.log(response)
-        // setPollDetails(response)
 
         const optionsMap = {} as Record<number, string>
         for (let option of response.poll_options) {
@@ -38,38 +37,47 @@ function PollDisplay() {
         }
 
         setVoteOptions(optionsMap)
+        processChartData(response, optionsMap)
     }
 
-    const processChartData = async (apiResponse: PollDetails) => {
-        const votes = apiResponse.votes
-        const aggregatedVotes = {} as Record<any, number>
-        for (let vote of votes) {
-            if (vote.poll_option_id in aggregatedVotes) {
-                aggregatedVotes[vote.poll_option_id] += 1
-            } else {
-                aggregatedVotes[vote.poll_option_id] = 1
+    const processChartData = useCallback(
+        async (apiResponse: PollDetails, optionsOverride: Record<any, string> = {}) => {
+            const votes = apiResponse.votes
+            const aggregatedVotes = {} as Record<any, number>
+            for (let vote of votes) {
+                if (vote.poll_option_id in aggregatedVotes) {
+                    aggregatedVotes[vote.poll_option_id] += 1
+                } else {
+                    aggregatedVotes[vote.poll_option_id] = 1
+                }
             }
-        }
 
-        const pollChartData = []
-        for (let vote_option_id of Object.keys(aggregatedVotes)) {
-            pollChartData.push({
-                id: vote_option_id,
-                value: aggregatedVotes[vote_option_id],
-                label: voteOptions[vote_option_id],
-            })
-        }
-        setChartData(pollChartData)
-    }
+            const pollChartData = []
+            for (let vote_option_id of Object.keys(aggregatedVotes)) {
+                pollChartData.push({
+                    id: vote_option_id,
+                    value: aggregatedVotes[vote_option_id],
+                    label: optionsOverride[vote_option_id] || voteOptions[vote_option_id],
+                })
+            }
+            setChartData(pollChartData)
+        },
+        [voteOptions],
+    )
 
     const pollVoteUpdates = useCallback(async () => {
         const response = (await apiGet(`show/${show_id}/poll/display`)) as PollDetails
+        const optionsMap = {} as Record<number, string>
+        for (let option of response.poll_options) {
+            optionsMap[option.id] = option.description
+        }
+
+        setVoteOptions(optionsMap)
         processChartData(response)
     }, [voteOptions])
 
     useEffect(() => {
         getPollDetails()
-        pollVoteUpdates()
     }, [])
 
     useEffect(() => {
@@ -89,9 +97,11 @@ function PollDisplay() {
             </Grid>
             <Grid size={4}>
                 <PieChart
+                    hideLegend
                     series={[
                         {
                             data: chartData,
+                            arcLabel: "label",
                         },
                     ]}
                     width={400}
