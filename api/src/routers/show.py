@@ -3,7 +3,7 @@ from src.core.dependencies import DB_SESSION
 from src.models.show import Show
 from src.schemas.poll import PollAndOptionsCreateSchema
 from src.schemas.show import ShowCreateSchema, ShowResponseSchema
-from src.services.poll import create_poll_and_options
+from src.services.poll import create_poll_and_options, serialize_poll
 from src.services.show import (
     create_show,
     get_latest_shows,
@@ -53,3 +53,18 @@ async def create_show_and_poll(
 
     response = create_poll_and_options(db, poll_and_options)
     return response
+
+
+@router.get("/{show_id}/poll/display")
+async def get_display_poll(show_id: int, db: DB_SESSION):
+    show = db.get(Show, show_id)
+    if not show:
+        raise HTTPException(status_code=404, detail="Show not found")
+
+    display_poll = show.display_poll
+    if not display_poll:
+        raise HTTPException(
+            status_code=400, detail="No Display poll has been set for this show"
+        )
+
+    return serialize_poll(display_poll)

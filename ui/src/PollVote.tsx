@@ -6,25 +6,32 @@ import Button from "@mui/material/Button"
 import type { PollDetails } from "./types"
 import { apiGet, apiPost } from "./utils/api"
 
+const POLL_INTERVAL = 3
+
 function PollVote() {
-    const { poll_id } = useParams()
+    const { show_id } = useParams()
     const [pollDetails, setPollDetails] = useState({} as PollDetails)
 
     const getPollDetails = async () => {
-        const response = await apiGet(`poll/${poll_id}`)
-        console.log("BRENDO PLEASE DONT BEEF IT...")
+        const response = await apiGet(`show/${show_id}/poll/display`)
         console.log(response)
         setPollDetails(response)
     }
 
     const voteForOption = async (optionId: number) => {
-        const response = await apiPost(`poll/${poll_id}/option/${optionId}/vote`, {})
+        const response = await apiPost(`poll/${pollDetails.id}/option/${optionId}/vote`, {})
         console.log("VOTE FOR OPTION RESPONSE...")
         console.log(response)
     }
 
     useEffect(() => {
         getPollDetails()
+        const pollTimer = setInterval(() => getPollDetails(), POLL_INTERVAL * 1000)
+
+        // this will clear the interval when component unmounts
+        return () => {
+            clearInterval(pollTimer)
+        }
     }, [])
 
     return (
