@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from src.core.dependencies import DB_SESSION
 from src.models.poll import Poll
 from src.schemas.poll import (
@@ -65,13 +65,14 @@ async def update_poll_option_details(
 
 
 @router.post("/{poll_id}/option/{option_id}/vote")
-async def poll_vote(poll_id: int, option_id: int, db: DB_SESSION):
+async def poll_vote(poll_id: int, option_id: int, db: DB_SESSION, request: Request):
     poll = db.get(Poll, poll_id)
     new_vote = create_vote(
         db,
         VoteCreateSchema(
             show_id=poll.show_id, poll_id=poll_id, poll_option_id=option_id
         ),
+        user_ip=request.client.host
     )
 
     return new_vote.to_pydantic(VoteResponseSchema)

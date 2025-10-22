@@ -5,7 +5,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles"
 
 import Admin from "./Admin"
 import Home from "./Home"
-import ManageShow from "./ManageShow"
+import ManageShow from "./AdminManageShow"
 import PollCreate from "./PollCreate"
 import PollDisplay from "./PollDisplay"
 import PollVote from "./PollVote"
