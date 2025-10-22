@@ -3,7 +3,7 @@ from src.models.vote import Vote
 from src.schemas.vote import VoteCreateSchema
 
 
-def create_vote(db: Session, vote: VoteCreateSchema) -> Vote:
+def create_vote(db: Session, vote: VoteCreateSchema, user_ip: str) -> Vote:
     new_vote = Vote(
         show_id=vote.show_id, poll_id=vote.poll_id, poll_option_id=vote.poll_option_id
     )

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
@@ -14,6 +14,7 @@ import {
     AccordionSummary,
     Button,
     Grid,
+    Link,
     TextField,
     Typography,
 } from "@mui/material"
@@ -28,6 +29,8 @@ type ManagePollType = {
 }
 
 function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) {
+    const navigate = useNavigate()
+
     const [pollTitle, setPollTitle] = useState("")
     const [pollOptions, setPollOptions] = useState([] as PollOption[])
     const [newOptionIndex, setNewOptionIndex] = useState(-1)
@@ -118,6 +121,10 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
         setPollOptions(prunedOptions)
     }
 
+    const goToRoute = (urlRoute: string) => {
+        navigate(urlRoute)
+    }
+
     useEffect(() => {
         setPollOptions(pollDetails.poll_options)
         setPollTitle(pollDetails.description)
@@ -131,6 +138,7 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
         disableDisplayWrapper: "mb-4",
         activePollSx: "var(--color-sky-200)",
         inactivePollSx: "var(--color-slate-200)",
+        gotoLink: "cursor-pointer",
     }
 
     return (
@@ -151,6 +159,13 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
                     <Button variant="contained" color="primary" onClick={handleDisplayPoll}>
                         Display
                     </Button>
+                    <Link
+                        href={`/show/${pollDetails.show_id}/display`}
+                        underline="always"
+                        target="_blank"
+                    >
+                        Go To Display
+                    </Link>
                 </Grid>
                 <Grid className={STYLES.pollTitleWrapper}>
                     <TextField

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from src.core.dependencies import DB_SESSION
 from src.models.show import Show
 from src.schemas.poll import PollAndOptionsCreateSchema
@@ -56,7 +56,7 @@ async def create_show_and_poll(
 
 
 @router.get("/{show_id}/poll/display")
-async def get_display_poll(show_id: int, db: DB_SESSION):
+async def get_display_poll(show_id: int, db: DB_SESSION, request: Request):
     show = db.get(Show, show_id)
     if not show:
         raise HTTPException(status_code=404, detail="Show not found")

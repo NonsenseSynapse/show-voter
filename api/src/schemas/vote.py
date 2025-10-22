@@ -14,3 +14,4 @@ class VoteResponseSchema(BaseModel):
     poll_id: int
     poll_option_id: int
     date_created: datetime
+    user_ip: str

@@ -11,6 +11,7 @@ class Poll(DbBase):
     description = Column(String)
     order = Column(Integer)
     is_display = Column(Boolean, default=False)
+    is_accepting_votes = Column(Boolean, default=False)
     date_created = Column(DateTime, default=func.now())
 
     show_id = Column(Integer, ForeignKey(Show.id))
@@ -41,6 +42,7 @@ class PollVote(DbBase):
     __tablename__ = "poll_vote"
     id = Column(Integer, primary_key=True, index=True)
     date_created = Column(DateTime, default=func.now())
+    user_ip = Column(String)
 
     poll_id = Column(Integer, ForeignKey(Poll.id))
     poll_option_id = Column(Integer, ForeignKey(PollOption.id))
