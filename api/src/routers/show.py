@@ -57,8 +57,6 @@ async def create_show_and_poll(
 
 @router.get("/{show_id}/poll/display")
 async def get_display_poll(show_id: int, db: DB_SESSION, request: Request):
-    print("JUICY FRUITITS")
-    print(request.client.host)
     show = db.get(Show, show_id)
     if not show:
         raise HTTPException(status_code=404, detail="Show not found")

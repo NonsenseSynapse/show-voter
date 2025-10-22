@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
+import AddCircleIcon from "@mui/icons-material/AddCircle"
 import { Card, CardActionArea, CardContent, Grid, Typography } from "@mui/material"
 import { blue } from "@mui/material/colors"
 
 import type { ShowSimple } from "./types"
-import { apiGet } from "./utils/api"
+import { apiGet, apiPost } from "./utils/api"
 
 function AdminShow({ show }: { show: ShowSimple }) {
     const navigate = useNavigate()
@@ -38,16 +39,33 @@ function Admin() {
         setShows(response)
     }
 
+    const createShow = async () => {
+        const response = (await apiPost(`show`, { title: "New Show" })) as ShowSimple
+        const updatedShows = [...shows]
+        updatedShows.push(response)
+        setShows(updatedShows)
+    }
+
     useEffect(() => {
         getShows()
     }, [])
 
+    const STYLES = {
+        newShowLink: "cursor-pointer",
+    }
+
     return (
         <Grid container size={12} spacing={2}>
-            <Grid size={12}>
+            <Grid size={12} container alignItems="center">
                 <Typography variant="h2" gutterBottom>
                     Shows
                 </Typography>
+                <AddCircleIcon
+                    color="primary"
+                    fontSize="large"
+                    className={STYLES.newShowLink}
+                    onClick={createShow}
+                />
             </Grid>
             {shows.map((show) => {
                 return (

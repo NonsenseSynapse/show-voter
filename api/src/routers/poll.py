@@ -72,7 +72,7 @@ async def poll_vote(poll_id: int, option_id: int, db: DB_SESSION, request: Reque
         VoteCreateSchema(
             show_id=poll.show_id, poll_id=poll_id, poll_option_id=option_id
         ),
-        user_ip=request.client.host
+        user_ip=request.client.host,
     )
 
     return new_vote.to_pydantic(VoteResponseSchema)
