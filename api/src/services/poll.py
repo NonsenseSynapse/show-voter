@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from src.models.color import Color
 from src.models.poll import Poll, PollOption
 from src.models.show import Show
 from src.schemas.poll import (
@@ -182,3 +183,10 @@ def activate_display_poll(db: Session, poll_id: int):
     db.commit()
 
     return poll
+
+def get_available_colors(db: Session, poll: Poll) -> list[Color]:
+    current_colors = [option.color.id for option in poll.poll_options]
+    available_colors = db.query(Color).filter(Color.id.not_in(current_colors))
+    return available_colors
+
+    
