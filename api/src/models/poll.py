@@ -2,6 +2,7 @@ from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from src.db.database import DbBase
+from src.models.color import Color
 from src.models.show import Show
 
 
@@ -30,7 +31,9 @@ class PollOption(DbBase):
     date_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 
     poll_id = Column(Integer, ForeignKey(Poll.id))
+    color_id = Column(Integer, ForeignKey(Color.id))
 
+    color = relationship("Color", uselist=False)
     poll = relationship("Poll", back_populates="poll_options", uselist=False)
     poll_votes = relationship("PollVote", back_populates="poll_option")
 
