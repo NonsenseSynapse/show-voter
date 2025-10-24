@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.core.config import CORS_ORIGINS
-from src.routers import poll, show, color
+from src.routers import color, poll, show
 
 app = FastAPI()
 app.include_router(show.router)

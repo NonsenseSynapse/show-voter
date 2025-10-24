@@ -2,9 +2,6 @@ from fastapi import APIRouter
 from src.core.dependencies import DB_SESSION
 from src.models.color import Color
 from src.schemas.color import ColorResponseSchema
-from src.services.show import (
-    serialize_show_details,
-)
 
 router = APIRouter(prefix="/color", tags=["color"])
 
