@@ -2,6 +2,7 @@ export type PollOption = {
     id: number | undefined
     description: string
     is_active: boolean
+    color: string
     is_deleted?: boolean
     poll_id?: number
     date_created?: string

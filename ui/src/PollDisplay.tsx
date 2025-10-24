@@ -6,13 +6,14 @@ import { Grid, Typography } from "@mui/material"
 import { PieChart } from "@mui/x-charts/PieChart"
 
 import { ROUTER_ENCRYPTION, ROUTER_NETWORK, ROUTER_PASSWORD, WEB_BASE } from "./constants"
-import type { PollDetails } from "./types"
+import type { PollDetails, PollOption } from "./types"
 import { apiGet } from "./utils/api"
 
 type PieChartData = {
     id: string
     value: number
     label: string
+    color?: string
 }
 
 function PollDisplay() {
@@ -21,6 +22,7 @@ function PollDisplay() {
     const POLL_INTERVAL = 3
 
     const [pollDescription, setPollDescription] = useState("")
+    const [pollOptionDetails, setPollOptionDetails] = useState({} as Record<any, PollOption>)
     const [voteOptions, setVoteOptions] = useState({} as Record<any, string>)
     const [chartData, setChartData] = useState([] as PieChartData[])
     const voteUrl = `${WEB_BASE}/show/${show_id}/vote`
@@ -33,15 +35,18 @@ function PollDisplay() {
         console.log(response)
 
         setPollDescription(response.description)
-
+                
+        const optionDetailsMap = {} as Record<any, PollOption>
         const optionsMap = {} as Record<number, string>
         for (let option of response.poll_options) {
             if (option.id) {
                 optionsMap[option.id] = option.description
+                optionDetailsMap[option.id] = option
             }
         }
 
         setVoteOptions(optionsMap)
+        setPollOptionDetails(optionDetailsMap)
         processChartData(response, optionsMap)
     }
 
@@ -59,15 +64,26 @@ function PollDisplay() {
 
             const pollChartData = []
             for (let vote_option_id of Object.keys(aggregatedVotes)) {
-                pollChartData.push({
+                const option_id = vote_option_id as unknown as number
+                const data = {
                     id: vote_option_id,
                     value: aggregatedVotes[vote_option_id],
                     label: optionsOverride[vote_option_id] || voteOptions[vote_option_id],
-                })
+                } as PieChartData
+                if (pollOptionDetails && option_id in pollOptionDetails) {
+                    data.color = pollOptionDetails[option_id].color
+                }
+                // pollChartData.push({
+                //     id: vote_option_id,
+                //     value: aggregatedVotes[vote_option_id],
+                //     label: optionsOverride[vote_option_id] || voteOptions[vote_option_id],
+                //     // color: pollOptionDetails[option_id].color
+                // })
+                pollChartData.push(data)
             }
             setChartData(pollChartData)
         },
-        [voteOptions],
+        [voteOptions, pollOptionDetails],
     )
 
     const pollVoteUpdates = useCallback(async () => {
@@ -80,6 +96,7 @@ function PollDisplay() {
         }
 
         setVoteOptions(optionsMap)
+        setPollDescription(response.description)
         processChartData(response)
     }, [voteOptions])
 
