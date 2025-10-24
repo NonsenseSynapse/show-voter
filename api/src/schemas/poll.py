@@ -11,6 +11,7 @@ class PollOptionCreateSchema(BaseModel):
 class PollOptionResponseSchema(BaseModel):
     id: int
     description: str
+    color: str
     poll_id: int
     is_active: bool
     date_created: datetime
