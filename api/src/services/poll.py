@@ -203,6 +203,47 @@ def activate_display_poll(db: Session, poll_id: int):
     return poll
 
 
+def hide_display_poll(db: Session, poll_id: int):
+    poll = db.get(Poll, poll_id)
+    if not poll:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unable to display poll with ID {poll_id} because it does not exist",
+        )
+
+    poll.is_display = False
+    db.commit()
+
+    return poll
+
+
+def enable_poll_voting(db: Session, poll_id: int):
+    poll = db.get(Poll, poll_id)
+    if not poll:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unable to enable voting for poll with ID {poll_id} because it does not exist",
+        )
+
+    db.query(Poll).filter_by(show_id=poll.show_id).update({"is_accepting_votes": False})
+    poll.is_accepting_votes = True
+    db.commit()
+
+    return poll
+
+
+def disable_poll_voting(db: Session, poll_id: int):
+    poll = db.get(Poll, poll_id)
+    if not poll:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unable to disable voting for poll with ID {poll_id} because it does not exist",
+        )
+
+    poll.is_accepting_votes = False
+    db.commit()
+
+
 def get_available_colors(db: Session, poll: Poll) -> list[Color]:
     current_colors = [option.color.id for option in poll.poll_options]
     available_colors = db.query(Color).filter(Color.id.not_in(current_colors)).all()

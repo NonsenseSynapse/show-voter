@@ -13,6 +13,8 @@ from src.services.poll import (
     activate_display_poll,
     create_poll,
     create_poll_option,
+    disable_poll_voting,
+    enable_poll_voting,
     serialize_poll,
     update_poll,
     update_poll_option,
@@ -48,6 +50,24 @@ async def display_poll(poll_id, db: DB_SESSION):
     return serialize_poll(updated_poll)
 
 
+@router.post("/{poll_id}/hide")
+async def hide_poll(poll_id, db: DB_SESSION):
+    updated_poll = activate_display_poll(db, poll_id)
+    return serialize_poll(updated_poll)
+
+
+@router.post("/{poll_id}/enable-voting")
+async def enable_voting_in_poll(poll_id, db: DB_SESSION):
+    updated_poll = enable_poll_voting(db, poll_id)
+    return serialize_poll(updated_poll)
+
+
+@router.post("/{poll_id}/disable-voting")
+async def disable_voting_in_poll(poll_id, db: DB_SESSION):
+    updated_poll = disable_poll_voting(db, poll_id)
+    return serialize_poll(updated_poll)
+
+
 @router.post("/{poll_id}/option")
 async def create_new_poll_option(
     poll_id: int, poll_option: PollOptionCreateSchema, db: DB_SESSION
@@ -67,6 +87,11 @@ async def update_poll_option_details(
 @router.post("/{poll_id}/option/{option_id}/vote")
 async def poll_vote(poll_id: int, option_id: int, db: DB_SESSION, request: Request):
     poll = db.get(Poll, poll_id)
+    if not poll.is_accepting_votes:
+        raise HTTPException(
+            status_code=400, detail="Poll is not accepting votes at this time."
+        )
+
     new_vote = create_vote(
         db,
         VoteCreateSchema(
