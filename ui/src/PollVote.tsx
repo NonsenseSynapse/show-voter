@@ -11,9 +11,10 @@ const POLL_INTERVAL = 3
 
 type VoteButtonType = {
     pollOption: PollOption
+    color: string
 }
 
-function VoteButton({ pollOption }: VoteButtonType) {
+function VoteButton({ pollOption, color }: VoteButtonType) {
     const voteForOption = async () => {
         const response = await apiPost(
             `poll/${pollOption.poll_id}/option/${pollOption.id}/vote`,
@@ -30,7 +31,7 @@ function VoteButton({ pollOption }: VoteButtonType) {
                 onClick={voteForOption}
                 variant="contained"
                 size="large"
-                sx={{ padding: 6 }}
+                sx={{ padding: 6, bgcolor: color }}
             >
                 {pollOption.description}
             </Button>
@@ -41,11 +42,21 @@ function VoteButton({ pollOption }: VoteButtonType) {
 function PollVote() {
     const { show_id } = useParams()
     const [pollDetails, setPollDetails] = useState({} as PollDetails)
+    const [pollOptionDetails, setPollOptionDetails] = useState({} as Record<any, PollOption>)
 
     const getPollDetails = async () => {
         const response = await apiGet(`show/${show_id}/poll/display`)
         console.log(response)
+
+        const optionDetailsMap = {} as Record<any, PollOption>
+        for (let option of response.poll_options) {
+            if (option.id) {
+                optionDetailsMap[option.id] = option
+            }
+        }
+
         setPollDetails(response)
+        setPollOptionDetails(optionDetailsMap)
     }
 
     useEffect(() => {
@@ -67,9 +78,14 @@ function PollVote() {
             <Grid className={STYLES.pollDescription} size={12} textAlign={"center"}>
                 <Typography variant="h4">{pollDetails.description}</Typography>
             </Grid>
-            {pollDetails.poll_options?.map((poll_option, _) => (
-                <VoteButton pollOption={poll_option} />
-            ))}
+            {pollDetails.poll_options?.map((poll_option, _) => {
+                let color = ""
+                if (poll_option?.id) {
+                    color = pollOptionDetails[poll_option.id].color
+                }
+
+                return <VoteButton pollOption={poll_option} color={color} />
+            })}
         </>
     )
 }

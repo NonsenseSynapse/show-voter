@@ -1,5 +1,8 @@
+import random
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from src.models.color import Color
 from src.models.poll import Poll, PollOption
 from src.models.show import Show
 from src.schemas.poll import (
@@ -42,11 +45,13 @@ def update_poll(db: Session, poll_id: int, poll: PollUpdateSchema):
     id_to_option = {option.id: option for option in existing_options}
 
     for updated_option in poll.poll_options:
+        next_color = get_new_color(db, existing_poll)
         if not updated_option.id:
             new_option = PollOption(
                 poll_id=existing_poll.id,
                 is_active=True,
                 description=updated_option.description,
+                color_id=next_color.id,
             )
             db.add(new_option)
         elif updated_option.id and updated_option.id in id_to_option:
@@ -75,7 +80,10 @@ def create_poll_option(db: Session, poll_id, poll_option: PollOptionCreateSchema
             status_code=404,
             detail=f"Unable to add poll option, poll {poll_id} does not exist",
         )
-    new_poll_option = PollOption(description=poll_option.description, poll_id=poll_id)
+    next_color = get_new_color(db, poll)
+    new_poll_option = PollOption(
+        description=poll_option.description, poll_id=poll_id, color_id=next_color.id
+    )
     db.add(new_poll_option)
     db.commit()
     db.refresh(new_poll_option)
@@ -115,6 +123,18 @@ def update_poll_option(
     return option
 
 
+def serialize_poll_option(poll_option: PollOption):
+    return PollOptionResponseSchema(
+        id=poll_option.id,
+        description=poll_option.description,
+        color=poll_option.color.hex if poll_option.color else "",
+        poll_id=poll_option.poll_id,
+        is_active=poll_option.is_active,
+        date_created=poll_option.date_created,
+        date_updated=poll_option.date_updated,
+    )
+
+
 def serialize_poll(poll: Poll):
     return PollResponseDetailsSchema(
         id=poll.id,
@@ -124,8 +144,7 @@ def serialize_poll(poll: Poll):
         is_display=poll.is_display,
         date_created=poll.date_created,
         poll_options=[
-            poll_option.to_pydantic(PollOptionResponseSchema)
-            for poll_option in poll.poll_options
+            serialize_poll_option(poll_option) for poll_option in poll.poll_options
         ],
         votes=[vote.to_pydantic(PollVoteResponseSchema) for vote in poll.votes],
     )
@@ -182,3 +201,14 @@ def activate_display_poll(db: Session, poll_id: int):
     db.commit()
 
     return poll
+
+
+def get_available_colors(db: Session, poll: Poll) -> list[Color]:
+    current_colors = [option.color.id for option in poll.poll_options]
+    available_colors = db.query(Color).filter(Color.id.not_in(current_colors)).all()
+    return available_colors
+
+
+def get_new_color(db: Session, poll: Poll) -> Color:
+    available_colors = get_available_colors(db, poll)
+    return random.choice(available_colors)
