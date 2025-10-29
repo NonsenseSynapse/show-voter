@@ -20,6 +20,7 @@ export type PollDetails = {
     order: number
     show_id: number
     is_display: boolean
+    is_accepting_votes: boolean
     date_created: string
     poll_options: PollOption[]
     votes: PollVote[]

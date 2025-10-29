@@ -24,6 +24,7 @@ class PollResponseSchema(BaseModel):
     order: int
     show_id: int
     is_display: bool
+    is_accepting_votes: bool
     date_created: datetime
     poll_options: Optional[List[PollOptionResponseSchema]] = []
 

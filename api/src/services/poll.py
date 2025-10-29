@@ -142,6 +142,7 @@ def serialize_poll(poll: Poll):
         order=poll.order,
         show_id=poll.show_id,
         is_display=poll.is_display,
+        is_accepting_votes=poll.is_accepting_votes,
         date_created=poll.date_created,
         poll_options=[
             serialize_poll_option(poll_option) for poll_option in poll.poll_options
