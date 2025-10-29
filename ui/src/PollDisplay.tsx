@@ -35,7 +35,7 @@ function PollDisplay() {
         console.log(response)
 
         setPollDescription(response.description)
-                
+
         const optionDetailsMap = {} as Record<any, PollOption>
         const optionsMap = {} as Record<number, string>
         for (let option of response.poll_options) {
@@ -47,11 +47,15 @@ function PollDisplay() {
 
         setVoteOptions(optionsMap)
         setPollOptionDetails(optionDetailsMap)
-        processChartData(response, optionsMap)
+        processChartData(response, optionsMap, optionDetailsMap)
     }
 
     const processChartData = useCallback(
-        async (apiResponse: PollDetails, optionsOverride: Record<any, string> = {}) => {
+        async (
+            apiResponse: PollDetails,
+            optionsOverride: Record<any, string> = {},
+            optionDetailsMap: Record<any, PollOption> = {},
+        ) => {
             const votes = apiResponse.votes
             const aggregatedVotes = {} as Record<any, number>
             for (let vote of votes) {
@@ -69,21 +73,13 @@ function PollDisplay() {
                     id: vote_option_id,
                     value: aggregatedVotes[vote_option_id],
                     label: optionsOverride[vote_option_id] || voteOptions[vote_option_id],
+                    color: optionDetailsMap[option_id].color,
                 } as PieChartData
-                if (pollOptionDetails && option_id in pollOptionDetails) {
-                    data.color = pollOptionDetails[option_id].color
-                }
-                // pollChartData.push({
-                //     id: vote_option_id,
-                //     value: aggregatedVotes[vote_option_id],
-                //     label: optionsOverride[vote_option_id] || voteOptions[vote_option_id],
-                //     // color: pollOptionDetails[option_id].color
-                // })
                 pollChartData.push(data)
             }
             setChartData(pollChartData)
         },
-        [voteOptions, pollOptionDetails],
+        [voteOptions],
     )
 
     const pollVoteUpdates = useCallback(async () => {
@@ -97,7 +93,7 @@ function PollDisplay() {
 
         setVoteOptions(optionsMap)
         setPollDescription(response.description)
-        processChartData(response)
+        processChartData(response, voteOptions, pollOptionDetails)
     }, [voteOptions])
 
     useEffect(() => {
