@@ -243,6 +243,7 @@ def disable_poll_voting(db: Session, poll_id: int):
 
     poll.is_accepting_votes = False
     db.commit()
+    return poll
 
 
 def get_available_colors(db: Session, poll: Poll) -> list[Color]:

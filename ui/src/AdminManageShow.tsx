@@ -35,6 +35,7 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
     const [pollOptions, setPollOptions] = useState([] as PollOption[])
     const [newOptionIndex, setNewOptionIndex] = useState(-1)
     const [isEdit, setIsEdit] = useState(false)
+    const [isVotingEnabled, setIsVotingEnabled] = useState(pollDetails.is_accepting_votes)
 
     const updatePoll = async () => {
         setIsEdit(false)
@@ -72,6 +73,16 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
     const handleDisplayPoll = async () => {
         await apiPost(`poll/${pollDetails.id}/display`, {})
         onActivatePoll(pollDetails.id)
+    }
+
+    const handleStartVoting = async () => {
+        await apiPost(`poll/${pollDetails.id}/enable-voting`, {})
+        setIsVotingEnabled(true)
+    }
+
+    const handleStopVoting = async () => {
+        await apiPost(`poll/${pollDetails.id}/disable-voting`, {})
+        setIsVotingEnabled(false)
     }
 
     const handleToggleVisibility = async (optionId: number) => {
@@ -158,6 +169,22 @@ function ManagePoll({ pollDetails, onActivatePoll, isDisplay }: ManagePollType) 
                 <Grid container className={STYLES.disableDisplayWrapper} spacing={4}>
                     <Button variant="contained" color="primary" onClick={handleDisplayPoll}>
                         Display
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="success"
+                        disabled={isVotingEnabled}
+                        onClick={handleStartVoting}
+                    >
+                        Start Voting
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="error"
+                        disabled={!isVotingEnabled}
+                        onClick={handleStopVoting}
+                    >
+                        End Voting
                     </Button>
                     <Link
                         href={`/show/${pollDetails.show_id}/display`}
