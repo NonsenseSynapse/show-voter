@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react"
+import React from "react"
 import { QRCode } from "react-qrcode-logo"
 import { useParams } from "react-router-dom"
 
 import { Grid, Typography } from "@mui/material"
+import type { HighlightItemData, HighlightScope } from "@mui/x-charts"
 import { PieChart } from "@mui/x-charts/PieChart"
 
 import { ROUTER_ENCRYPTION, ROUTER_NETWORK, ROUTER_PASSWORD, WEB_BASE } from "./constants"
@@ -25,8 +27,15 @@ function PollDisplay() {
     const [pollOptionDetails, setPollOptionDetails] = useState({} as Record<any, PollOption>)
     const [voteOptions, setVoteOptions] = useState({} as Record<any, string>)
     const [chartData, setChartData] = useState([] as PieChartData[])
-    const voteUrl = `${WEB_BASE}/show/${show_id}/vote`
 
+    const defaultHighlightScope = { fade: "global", highlight: "item" } as HighlightScope
+
+    const [highlightScope, setHighlightScope] = useState(defaultHighlightScope)
+    const [highlightedItem, setHighLightedItem] = React.useState<HighlightItemData | null>(
+        {} as HighlightItemData,
+    )
+
+    const voteUrl = `${WEB_BASE}/show/${show_id}/vote`
     const wifiUrl = `WIFI:T:${ROUTER_ENCRYPTION};S:${ROUTER_NETWORK};P:${ROUTER_PASSWORD};`
 
     const getPollDetails = async () => {
@@ -78,6 +87,33 @@ function PollDisplay() {
                 pollChartData.push(data)
             }
             setChartData(pollChartData)
+
+            // If voting is finished, highlight the winning item
+            if (!apiResponse.is_accepting_votes) {
+                let highestVotes = 0
+                let highestVoteIndex = 0
+                pollChartData.forEach((pollOption, index) => {
+                    if (pollOption.value >= highestVotes) {
+                        highestVotes = pollOption.value
+                        highestVoteIndex = index
+                    }
+                })
+
+                setHighLightedItem((prev) => ({
+                    ...prev,
+                    seriesId: "voteData",
+                    dataIndex: highestVoteIndex,
+                }))
+                setHighlightScope(defaultHighlightScope)
+                // otherwise, reset highlighting so that all items are visible
+            } else {
+                setHighLightedItem((prev) => ({
+                    ...prev,
+                    seriesId: "voteData",
+                    dataIndex: -1,
+                }))
+                setHighlightScope({})
+            }
         },
         [voteOptions],
     )
@@ -129,8 +165,12 @@ function PollDisplay() {
                         {
                             data: chartData,
                             arcLabel: "label",
+                            highlightScope: highlightScope,
+                            faded: { additionalRadius: -30, color: "gray" },
+                            id: "voteData",
                         },
                     ]}
+                    highlightedItem={highlightedItem}
                     width={400}
                     height={400}
                 />

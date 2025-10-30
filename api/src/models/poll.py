@@ -12,7 +12,7 @@ class Poll(DbBase):
     description = Column(String)
     order = Column(Integer)
     is_display = Column(Boolean, default=False)
-    is_accepting_votes = Column(Boolean, default=False)
+    is_accepting_votes = Column(Boolean, default=True)
     date_created = Column(DateTime, default=func.now())
 
     show_id = Column(Integer, ForeignKey(Show.id))

@@ -2,7 +2,7 @@ export type PollOption = {
     id: number | undefined
     description: string
     is_active: boolean
-    color: string
+    color?: string
     is_deleted?: boolean
     poll_id?: number
     date_created?: string
@@ -20,6 +20,7 @@ export type PollDetails = {
     order: number
     show_id: number
     is_display: boolean
+    is_accepting_votes: boolean
     date_created: string
     poll_options: PollOption[]
     votes: PollVote[]

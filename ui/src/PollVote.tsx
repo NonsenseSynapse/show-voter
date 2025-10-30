@@ -12,9 +12,10 @@ const POLL_INTERVAL = 3
 type VoteButtonType = {
     pollOption: PollOption
     color: string
+    isDisabled: boolean
 }
 
-function VoteButton({ pollOption, color }: VoteButtonType) {
+function VoteButton({ pollOption, color, isDisabled }: VoteButtonType) {
     const voteForOption = async () => {
         const response = await apiPost(
             `poll/${pollOption.poll_id}/option/${pollOption.id}/vote`,
@@ -27,6 +28,7 @@ function VoteButton({ pollOption, color }: VoteButtonType) {
     return (
         <Grid container size={12} justifyContent="center">
             <Button
+                disabled={isDisabled}
                 fullWidth
                 onClick={voteForOption}
                 variant="contained"
@@ -43,9 +45,10 @@ function PollVote() {
     const { show_id } = useParams()
     const [pollDetails, setPollDetails] = useState({} as PollDetails)
     const [pollOptionDetails, setPollOptionDetails] = useState({} as Record<any, PollOption>)
+    const [isDisabled, setIsDisabled] = useState(false)
 
     const getPollDetails = async () => {
-        const response = await apiGet(`show/${show_id}/poll/display`)
+        const response = (await apiGet(`show/${show_id}/poll/display`)) as PollDetails
         console.log(response)
 
         const optionDetailsMap = {} as Record<any, PollOption>
@@ -56,6 +59,7 @@ function PollVote() {
         }
 
         setPollDetails(response)
+        setIsDisabled(!response.is_accepting_votes)
         setPollOptionDetails(optionDetailsMap)
     }
 
@@ -84,7 +88,7 @@ function PollVote() {
                     color = pollOptionDetails[poll_option.id].color
                 }
 
-                return <VoteButton pollOption={poll_option} color={color} />
+                return <VoteButton pollOption={poll_option} color={color} isDisabled={isDisabled} />
             })}
         </>
     )
